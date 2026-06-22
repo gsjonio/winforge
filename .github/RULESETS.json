@@ -1,0 +1,116 @@
+{
+  "rulesets": [
+    {
+      "name": "Main Branch Protection",
+      "description": "Protection rules for the main branch",
+      "target": "branch",
+      "enforcement": "active",
+      "bypass_actors": [],
+      "conditions": {
+        "ref_name": {
+          "include": [
+            "refs/heads/main"
+          ],
+          "exclude": []
+        }
+      },
+      "rules": [
+        {
+          "type": "creation",
+          "parameters": {
+            "restrict_to_administrators": false
+          }
+        },
+        {
+          "type": "update",
+          "parameters": {
+            "restrict_to_administrators": false
+          }
+        },
+        {
+          "type": "deletion",
+          "parameters": {
+            "restrict_to_administrators": true
+          }
+        },
+        {
+          "type": "required_linear_history"
+        },
+        {
+          "type": "required_deployments",
+          "parameters": {
+            "required_deployment_environments": [
+              "production"
+            ]
+          }
+        },
+        {
+          "type": "required_status_checks",
+          "parameters": {
+            "required_status_checks": [
+              {
+                "context": "Lint",
+                "integration_id": null
+              },
+              {
+                "context": "Validate",
+                "integration_id": null
+              },
+              {
+                "context": "Security",
+                "integration_id": null
+              },
+              {
+                "context": "Documentation",
+                "integration_id": null
+              }
+            ],
+            "strict_required_status_checks_policy": true
+          }
+        },
+        {
+          "type": "pull_request",
+          "parameters": {
+            "dismiss_stale_reviews_on_push": true,
+            "require_code_owner_review": false,
+            "require_last_push_approval": true,
+            "required_approving_review_count": 1,
+            "required_review_thread_resolution": false
+          }
+        },
+        {
+          "type": "non_fast_forward"
+        }
+      ]
+    },
+    {
+      "name": "PR Quality Standards",
+      "description": "Quality gates for all pull requests",
+      "target": "pull_request",
+      "enforcement": "active",
+      "bypass_actors": [],
+      "conditions": {
+        "ref_name": {
+          "include": [
+            "refs/heads/*"
+          ],
+          "exclude": []
+        }
+      },
+      "rules": [
+        {
+          "type": "required_status_checks",
+          "parameters": {
+            "required_status_checks": [
+              {
+                "context": "PR Checks",
+                "integration_id": null
+              }
+            ],
+            "strict_required_status_checks_policy": false
+          }
+        }
+      ]
+    }
+  ]
+}
