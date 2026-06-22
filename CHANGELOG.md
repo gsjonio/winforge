@@ -47,9 +47,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `Set-FileAssociation()` - Configure file type associations
 
 - **Installation Groups** (4 groups, 16 programs)
-  - **Base** (5 programs) - Firefox, Git, VLC, WinRAR, LibreOffice
+  - **Base** (6 programs) - Firefox, Git, VLC, WinRAR, LibreOffice, WhatsApp
   - **Dev** (4 programs) - VS Code, GitHub Desktop, Claude, Python
-  - **Gaming & Social** (4 programs) - Steam, Discord, Spotify, WhatsApp
+  - **Gaming** (3 programs) - Steam, Discord, Spotify
   - **System** (3 programs) - NVIDIA App, CPU-Z, HWMonitor
   - Modular group system for easy customization
   - Winget + Chocolatey fallback for all programs
