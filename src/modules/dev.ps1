@@ -4,22 +4,23 @@ function Install-DevPrograms {
     Write-GroupHeader "DEV - Development Programs"
 
     $programs = @(
-        # @{
-        #     Name        = "Visual Studio Code"
-        #     WingetId    = "Microsoft.VisualStudioCode"
-        #     Executable  = "code"
-        # }
-        # @{
-        #     Name        = "Git"
-        #     WingetId    = "Git.Git"
-        #     Executable  = "git"
-        # }
-        # @{
-        #     Name        = "Node.js"
-        #     WingetId    = "OpenJS.NodeJS"
-        #     Executable  = "node"
-        # }
-        # Add more development tools here...
+        @{
+            Name     = "Visual Studio Code"
+            WingetId = "Microsoft.VisualStudioCode"
+            ChocoId  = "vscode"
+            Executable = "code"
+        },
+        @{
+            Name     = "GitHub Desktop"
+            WingetId = "GitHub.GitHubDesktop"
+            ChocoId  = "github-desktop"
+            Executable = "github"
+        },
+        @{
+            Name     = "Claude"
+            WingetId = "Anthropic.Claude"
+            Executable = "claude"
+        }
     )
 
     foreach ($program in $programs) {
