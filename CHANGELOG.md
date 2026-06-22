@@ -1,9 +1,15 @@
 # Changelog
 
+[English](#english) | [Português](#português)
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## English
+
+---
 
 ## [0.1.0] - 2026-06-22
 
@@ -143,3 +149,57 @@ For more information, see:
 - [README.md](README.md) - Getting started
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - Project design
 - [docs/EXAMPLES.md](docs/EXAMPLES.md) - Usage examples
+
+---
+
+## Português
+
+### Visão Geral
+
+Registro de todas as alterações notáveis deste projeto.
+
+O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
+e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0.html).
+
+### Versão Atual: v0.3.1
+
+#### Recursos Principais
+
+- **17 Programas** organizados em 4 grupos
+- **Instalação Multi-método**: Winget → Chocolatey → URL customizada
+- **Validação Inteligente**: 4 métodos de detecção de instalação
+- **Suporte GPU Dual**: NVIDIA App + AMD Radeon Software
+- **6 Workflows GitHub Actions** automáticos
+- **Documentação Bilíngue** completa
+
+#### Grupos de Instalação
+
+- **Base (7)**: Firefox, Git, VLC, WinRAR, LibreOffice, WhatsApp, Spotify
+- **Dev (4)**: VS Code, GitHub Desktop, Claude, Python
+- **Gaming (2)**: Steam, Discord
+- **Sistema (4)**: NVIDIA App, AMD Radeon, CPU-Z, HWMonitor
+
+#### Estatísticas
+
+- **Total de commits**: 29
+- **Versões**: 6 (v0.1.0 → v0.3.1)
+- **Arquivos**: 20+
+- **Scripts PowerShell**: 10
+- **Arquivos de documentação**: 8+
+- **Linhas de código**: ~1000
+- **Linhas de documentação**: ~2500
+
+#### Taxa de Sucesso de Instalação
+
+| Configuração | Taxa de Sucesso |
+| --- | --- |
+| Apenas Winget | ~70% |
+| Winget + Chocolatey | ~95% |
+| Todos os 3 métodos | ~99% |
+
+#### Mais Informações
+
+- [README.md](README.md) - Como começar
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - Design do projeto
+- [docs/EXAMPLES.md](docs/EXAMPLES.md) - Exemplos de uso
+- [docs/GITHUB-ACTIONS.md](docs/GITHUB-ACTIONS.md) - Automação CI/CD

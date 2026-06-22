@@ -88,18 +88,78 @@ Um framework de automação PowerShell 7+ para configurar sistemas Windows após
 
 ### Características
 
-- **Grupos modulares**: Organize por categoria (base, dev, gaming)
-- **Execução seletiva**: Execute todos ou grupos específicos
+- **Grupos modulares**: Organize por categoria (base, dev, gaming, system)
+- **Execução seletiva**: Execute todos os grupos ou apenas os que precisa
 - **Idempotente**: Verifica se programas já estão instalados
-- **Logging detalhado**: Mensagens coloridas
-- **Elevação automática**: Solicita privilégios de administrador
+- **Logging detalhado**: Mensagens coloridas com status
+- **Elevação automática**: Solicita privilégios de administrador quando necessário
+- **Instalação multi-método**: Winget → Chocolatey → URL customizada
+- **Validação inteligente**: 4 métodos de detecção de instalação
+
+### Pré-requisitos
+
+- PowerShell 7.0+
+- Windows 10/11 com acesso administrativo
+- winget
+
+### Estrutura do Projeto
+
+```text
+src/
+├── core/          Lógica de instalação (Install-Program, Set-SystemConfig)
+├── utils/         Funções reutilizáveis (Logging, Validation, Registry, System)
+└── modules/       Grupos de instalação (base, dev, gaming, system)
+
+docs/              Documentação (Arquitetura, Exemplos, Guia de Validação)
+tools/             Utilitários (lint.ps1, validate.ps1)
+```
+
+**Veja [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) para arquitetura detalhada.**
+
+### Qualidade de Código
+
+Linting PowerShell com **PSScriptAnalyzer**:
+
+```powershell
+# Instalar analisador (uma única vez)
+Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
+
+# Verificar qualidade do código
+.\tools\lint.ps1              # Lint de todos os scripts
+.\tools\lint.ps1 -Path .\src  # Lint no diretório src
+.\tools\lint.ps1 -Severity Error  # Apenas erros
+```
+
+Configuração: `.pslintrc`
+
+### Programas Inclusos (17 total)
+
+**Base (7)**: Firefox, Git, VLC, WinRAR, LibreOffice, WhatsApp, Spotify
+**Dev (4)**: VS Code, GitHub Desktop, Claude, Python
+**Gaming (2)**: Steam, Discord
+**Sistema (4)**: NVIDIA App, AMD Radeon, CPU-Z, HWMonitor
 
 ### Início Rápido
 
 ```powershell
-# Executar todos os grupos
+# Executar todos os grupos (17 programas)
 .\setup.ps1
 
 # Executar grupo específico
-.\setup.ps1 -Group dev
+.\setup.ps1 -Group base      # 7 programas essenciais
+.\setup.ps1 -Group dev       # 4 ferramentas desenvolvimento
+.\setup.ps1 -Group gaming    # 2 programas jogos
+.\setup.ps1 -Group system    # 4 utilitários de sistema
+
+# Validar instalações
+.\tools\validate.ps1
 ```
+
+### Documentação
+
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Estrutura e design do projeto
+- **[EXAMPLES.md](docs/EXAMPLES.md)** - Como adicionar programas e configurações
+- **[VALIDATION.md](docs/VALIDATION.md)** - Guia de validação de instalação
+- **[STRUCTURE.md](docs/STRUCTURE.md)** - Referência rápida de todos os arquivos
+- **[CLEANUP.md](docs/CLEANUP.md)** - Como limpar arquivos antigos (ao atualizar)
+- **[GITHUB-ACTIONS.md](docs/GITHUB-ACTIONS.md)** - Guia de automação CI/CD
