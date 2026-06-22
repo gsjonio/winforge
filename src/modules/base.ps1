@@ -4,12 +4,36 @@ function Install-BasePrograms {
     Write-GroupHeader "BASE - Essential Programs"
 
     $programs = @(
-        # @{
-        #     Name        = "Program Name"
-        #     WingetId    = "Publisher.Program"
-        #     Executable  = "program.exe"  # Optional: command to check installation
-        #     InstallerUrl = "https://..."  # Optional: custom installer URL
-        # }
+        @{
+            Name     = "Firefox"
+            WingetId = "Mozilla.Firefox"
+            ChocoId  = "firefox"
+            Executable = "firefox"
+        },
+        @{
+            Name     = "Git"
+            WingetId = "Git.Git"
+            ChocoId  = "git"
+            Executable = "git"
+        },
+        @{
+            Name     = "VLC Media Player"
+            WingetId = "VideoLAN.VLC"
+            ChocoId  = "vlc"
+            Executable = "vlc"
+        },
+        @{
+            Name     = "WinRAR"
+            WingetId = "RARLab.WinRAR"
+            ChocoId  = "winrar"
+            Executable = "rar"
+        },
+        @{
+            Name     = "LibreOffice"
+            WingetId = "TheDocumentFoundation.LibreOffice"
+            ChocoId  = "libreoffice"
+            Executable = "soffice"
+        }
     )
 
     foreach ($program in $programs) {
