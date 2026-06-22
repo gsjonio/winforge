@@ -1,7 +1,7 @@
-# Gaming group: Gaming-related programs and configurations
+# Gaming & Social group: Gaming, social, and multimedia applications
 
 function Install-GamingPrograms {
-    Write-GroupHeader "GAMING - Gaming Programs"
+    Write-GroupHeader "GAMING - Gaming & Social Programs"
 
     $programs = @(
         @{
@@ -21,6 +21,11 @@ function Install-GamingPrograms {
             WingetId = "Spotify.Spotify"
             ChocoId  = "spotify"
             Executable = "spotify"
+        },
+        @{
+            Name     = "WhatsApp"
+            WingetId = "WhatsApp.WhatsApp"
+            Executable = "whatsapp"
         }
     )
 
