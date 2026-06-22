@@ -1,0 +1,118 @@
+# PSScriptAnalyzer Configuration for Windows Setup Automation
+
+# Rules to enable (severity: Error, Warning, Information)
+Rules = @{
+    # Code style
+    PSUseConsistentIndentation = @{
+        Enable  = $true
+        Kind    = 'space'
+        PipelineIndentation = 'IncreaseIndentationForFirstPipeline'
+        IndentationSize = 4
+    }
+
+    PSUseConsistentWhitespace = @{
+        Enable = $true
+    }
+
+    PSAlignAssignmentStatement = @{
+        Enable = $true
+    }
+
+    # Best practices
+    PSAvoidImplicitStringConversion = @{
+        Enable = $true
+    }
+
+    PSUseApprovedVerbs = @{
+        Enable = $true
+    }
+
+    PSUseDeclaredVarsMoreThanAssignments = @{
+        Enable = $true
+    }
+
+    PSAvoidUsingCmdletAliases = @{
+        Enable = $false  # Allow aliases for brevity in some cases
+    }
+
+    # Performance
+    PSAvoidUsingInvokeExpression = @{
+        Enable = $true
+    }
+
+    # Security
+    PSAvoidUsingConvertToSecureStringWithPlainText = @{
+        Enable = $true
+    }
+
+    PSAvoidUsingUsernameAndPasswordParams = @{
+        Enable = $true
+    }
+
+    PSAvoidUsingPlainTextForPassword = @{
+        Enable = $true
+    }
+
+    PSAvoidUsingWildcardCharactersInFileNames = @{
+        Enable = $true
+    }
+
+    # Readability
+    PSAvoidUsingDoubleQuotedStrings = @{
+        Enable = $false  # Allow double quotes for readability
+    }
+
+    PSAvoidLongLines = @{
+        Enable = $true
+        MaximumLineLength = 120
+    }
+
+    PSAvoidUsingComputerNameHardcoded = @{
+        Enable = $true
+    }
+
+    PSAvoidGlobalAliases = @{
+        Enable = $true
+    }
+
+    PSAvoidGlobalFunctions = @{
+        Enable = $true
+    }
+
+    PSAvoidGlobalVariables = @{
+        Enable = $true
+    }
+
+    PSAvoidShouldContinueWithoutForce = @{
+        Enable = $true
+    }
+
+    PSAvoidUsingWriteHost = @{
+        Enable = $false  # Allow Write-Host for logging output
+    }
+
+    PSProvideCommentHelp = @{
+        Enable = $false  # Optional; we have ARCHITECTURE.md
+    }
+}
+
+# Rules to exclude
+ExcludeRules = @(
+    'PSAvoidUsingDoubleQuotedStrings',
+    'PSAvoidWriteHost',
+    'PSProvideCommentHelp'
+)
+
+# Files to include
+Include = @(
+    '*.ps1',
+    '*.psm1'
+)
+
+# Files to exclude
+Exclude = @(
+    'tests/*'
+)
+
+# Recursive analysis
+Recurse = $true
