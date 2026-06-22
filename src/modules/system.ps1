@@ -21,6 +21,11 @@ function Install-SystemPrograms {
             WingetId = "CPUID.HWMonitor"
             ChocoId  = "hwmonitor"
             Executable = "hwmonitor"
+        },
+        @{
+            Name     = "AMD Radeon Software"
+            WingetId = "AMD.RadeonSoftware"
+            Executable = "radeon"
         }
     )
 
