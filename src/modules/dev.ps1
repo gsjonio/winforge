@@ -20,6 +20,12 @@ function Install-DevPrograms {
             Name     = "Claude"
             WingetId = "Anthropic.Claude"
             Executable = "claude"
+        },
+        @{
+            Name     = "Python"
+            WingetId = "Python.Python.3.12"
+            ChocoId  = "python"
+            Executable = "python"
         }
     )
 
