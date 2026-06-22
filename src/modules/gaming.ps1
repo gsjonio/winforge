@@ -4,22 +4,24 @@ function Install-GamingPrograms {
     Write-GroupHeader "GAMING - Gaming Programs"
 
     $programs = @(
-        # @{
-        #     Name        = "Steam"
-        #     WingetId    = "Valve.Steam"
-        #     Executable  = "steam"
-        # }
-        # @{
-        #     Name        = "Discord"
-        #     WingetId    = "Discord.Discord"
-        #     Executable  = "discord"
-        # }
-        # @{
-        #     Name        = "OBS Studio"
-        #     WingetId    = "OBSProject.OBStudio"
-        #     Executable  = "obs32"
-        # }
-        # Add more gaming tools here...
+        @{
+            Name     = "Steam"
+            WingetId = "Valve.Steam"
+            ChocoId  = "steam"
+            Executable = "steam"
+        },
+        @{
+            Name     = "Discord"
+            WingetId = "Discord.Discord"
+            ChocoId  = "discord"
+            Executable = "discord"
+        },
+        @{
+            Name     = "Spotify"
+            WingetId = "Spotify.Spotify"
+            ChocoId  = "spotify"
+            Executable = "spotify"
+        }
     )
 
     foreach ($program in $programs) {
