@@ -11,6 +11,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.0] - 2026-06-24
+
+### Added
+
+- **Optimize Module** - System optimization and privacy tweaks
+  - Disable diagnostic data collection and telemetry
+  - Disable background application activity
+  - Disable App Installer (Push Installation)
+  - Disable Find My Device
+  - Disable Activity History sync
+  - Disable Problem Steps Recorder (PSR)
+  - Disable automatic update notifications
+  - Disable File Explorer insights
+  - Disable Start menu recent documents history
+  - Disable Windows Defender SmartScreen
+  - Disable settings sync (Accessibility, Apps, Personalization, StartLayout)
+  - Disable Cortana
+  - Disable automatic driver installation
+  - 15+ Registry-based optimizations from Group Policy Editor
+
+- **Updated Core**
+  - `setup.ps1` now supports "optimize" group parameter
+  - `setup.ps1 -Group optimize` to run optimizations
+  - Added optimize to default group execution
+
+### Changed
+
+- Enhanced `setup.ps1` to include 5th group (optimize) in default run
+
+---
+
 ## [0.1.0] - 2026-06-22
 
 ### Added
@@ -161,11 +192,12 @@ Registro de todas as alterações notáveis deste projeto.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0.html).
 
-### Versão Atual: v0.3.1
+### Versão Atual: v0.4.0
 
 #### Recursos Principais
 
 - **17 Programas** organizados em 4 grupos
+- **Otimizações de Sistema** - Novo módulo com 15+ configurações de privacidade
 - **Instalação Multi-método**: Winget → Chocolatey → URL customizada
 - **Validação Inteligente**: 4 métodos de detecção de instalação
 - **Suporte GPU Dual**: NVIDIA App + AMD Radeon Software
@@ -178,15 +210,16 @@ e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0
 - **Dev (4)**: VS Code, GitHub Desktop, Claude, Python
 - **Gaming (2)**: Steam, Discord
 - **Sistema (4)**: NVIDIA App, AMD Radeon, CPU-Z, HWMonitor
+- **Optimize (novo)**: Otimizações de privacidade e performance
 
 #### Estatísticas
 
-- **Total de commits**: 29
-- **Versões**: 6 (v0.1.0 → v0.3.1)
-- **Arquivos**: 20+
-- **Scripts PowerShell**: 10
+- **Total de commits**: 38
+- **Versões**: 14 (v0.1.0 → v0.4.0)
+- **Arquivos**: 21+
+- **Scripts PowerShell**: 11
 - **Arquivos de documentação**: 8+
-- **Linhas de código**: ~1000
+- **Linhas de código**: ~1100
 - **Linhas de documentação**: ~2500
 
 #### Taxa de Sucesso de Instalação
