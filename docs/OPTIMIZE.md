@@ -29,6 +29,7 @@ The `optimize` module applies 15+ system optimizations and privacy tweaks via Wi
 - ✅ Disable background application activity
 - ✅ Disable tailored experiences and suggestions
 - ✅ Disable automatic driver installation
+- ✅ Disable Multimedia Class Scheduler (if RAM ≥ 8GB)
 
 #### Microsoft Services
 - ✅ Disable Find My Device feature
@@ -138,6 +139,7 @@ O módulo `optimize` aplica 15+ otimizações de sistema e ajustes de privacidad
 - ✅ Desabilitar atividade de aplicativos em segundo plano
 - ✅ Desabilitar experiências e sugestões personalizadas
 - ✅ Desabilitar instalação automática de drivers
+- ✅ Desabilitar Multimedia Class Scheduler (se RAM ≥ 8GB)
 
 #### Serviços Microsoft
 - ✅ Desabilitar recurso Localizar Meu Dispositivo
