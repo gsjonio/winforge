@@ -8,6 +8,16 @@ function Install-OptimizePrograms {
 function Set-OptimizeConfiguration {
     Write-GroupHeader "OPTIMIZE - System Optimization & Privacy"
 
+    # Check system RAM and disable Multimedia Class Scheduler if >= 8GB
+    $ramGB = [math]::Round((Get-WmiObject -Class Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 0)
+    if ($ramGB -ge 8) {
+        Apply-SystemConfig "Disable Multimedia Class Scheduler (RAM >= 8GB)" {
+            if (Get-Command Disable-MMAgent -ErrorAction SilentlyContinue) {
+                Disable-MMAgent -mc
+            }
+        }
+    }
+
     # Disable telemetry and data collection
     Apply-SystemConfig "Disable diagnostic data collection" {
         Set-RegistryValue "HKCU:\Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack" "Enabled" 0 "DWORD"
