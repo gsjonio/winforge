@@ -12,35 +12,27 @@ function Set-RegistryValue {
         $Value,
 
         [Parameter(Mandatory = $false)]
-        [ValidateSet("String", "DWord", "QWord", "Binary", "ExpandString", "MultiString")]
+        [ValidateSet("String", "DWORD", "QWORD", "Binary", "ExpandString", "MultiString")]
         [string]$Type = "String"
     )
 
     try {
-        $regPath = $Path -replace '^HKEY_', ''
-        $hive = $regPath.Split('\')[0]
-
-        $hiveName = @{
-            "HKEY_LOCAL_MACHINE"        = "HKLM"
-            "HKEY_CURRENT_USER"         = "HKCU"
-            "HKEY_CLASSES_ROOT"         = "HKCR"
-            "HKEY_CURRENT_CONFIG"       = "HKCC"
-            "HKEY_USERS"                = "HKU"
-            "HKLM"                      = "HKLM"
-            "HKCU"                      = "HKCU"
-            "HKCR"                      = "HKCR"
-            "HKCC"                      = "HKCC"
-            "HKU"                       = "HKU"
-        }[$hive]
-
-        $subPath = ($regPath -split '\\', 2)[1]
-        $fullPath = "$($hiveName):\$subPath"
-
-        if (-not (Test-Path -Path $fullPath)) {
-            New-Item -Path $fullPath -Force | Out-Null
+        # Handle both formats: "HKCU:\path" and "HKCU:\path"
+        $fullPath = if ($Path.Contains(':\')) {
+            $Path  # Already has provider format
+        } else {
+            # Convert HKCU, HKLM format to HKCU:\, HKLM:\
+            $Path -replace '^(HKCU|HKLM|HKCR|HKCC|HKU)([:\\])', '$1:\' -replace '\\\\', '\'
         }
 
-        Set-ItemProperty -Path $fullPath -Name $Name -Value $Value -Type $Type -Force
+        # Ensure parent path exists
+        $parentPath = Split-Path -Parent $fullPath
+        if (-not (Test-Path -Path $parentPath -ErrorAction SilentlyContinue)) {
+            New-Item -Path $parentPath -Force -ErrorAction SilentlyContinue | Out-Null
+        }
+
+        # Set registry value
+        Set-ItemProperty -Path $fullPath -Name $Name -Value $Value -Type $Type -Force -ErrorAction Stop
 
         return $true
     }
