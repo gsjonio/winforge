@@ -241,5 +241,37 @@ function Set-OptimizeConfiguration {
         Write-Log "Sleep/Hibernate disabled - PC stays fully active" -Level Info
     }
 
+    # RAM/Swap Optimizations (32GB RAM configuration)
+    Apply-SystemConfig "Configure Virtual Memory (Page File) to 8GB" {
+        try {
+            # Set page file to 8GB (minimum and maximum = no dynamic resizing)
+            $pageFileSizeMB = 8192
+
+            # Get all drives and set page file on C: drive
+            Get-WmiObject Win32_PageFile | Remove-WmiObject -ErrorAction SilentlyContinue
+
+            Set-WmiInstance -Class Win32_PageFileSetting `
+                -Arguments @{Name = "C:\pagefile.sys"; InitialSize = $pageFileSizeMB; MaximumSize = $pageFileSizeMB} `
+                -ErrorAction SilentlyContinue
+
+            Write-Log "Virtual Memory set to 8GB (fixed size, never used with 32GB RAM)" -Level Info
+        }
+        catch {
+            Write-Log "Could not set page file (may require reboot): $_" -Level Warning
+        }
+    }
+
+    Apply-SystemConfig "Optimize cache behavior for responsiveness" {
+        # Optimize for responsiveness (already default on desktop)
+        # But also enable memory cache behavior for faster disk operations
+        Set-RegistryValue "HKLM:\System\CurrentControlSet\Services\Srv\Parameters" "MaxWorkItems" 8192 "DWORD"
+        Set-RegistryValue "HKLM:\System\CurrentControlSet\Services\Srv\Parameters" "MaxRawWorkItems" 512 "DWORD"
+
+        # Enable memory-intensive caching for gaming performance
+        Set-RegistryValue "HKLM:\System\CurrentControlSet\Services\LanmanServer\Parameters" "CachedOpenLimit" 2000 "DWORD"
+
+        Write-Log "Cache behavior optimized for memory-intensive operations (gaming)" -Level Info
+    }
+
     Write-Log "All system optimizations completed" -Level Success
 }
