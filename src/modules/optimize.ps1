@@ -104,5 +104,22 @@ function Set-OptimizeConfiguration {
         Set-RegistryValue "HKLM:\Software\Policies\Microsoft\Windows\Device Metadata" "PreventDeviceMetadataFromNetwork" 1 "DWORD"
     }
 
+    # Desktop-specific services (Xbox, Bluetooth, Game Bar)
+    Apply-SystemConfig "Disable Xbox services" {
+        Get-Service -Name "XblAuthManager" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
+        Get-Service -Name "XblGameSave" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
+        Write-Log "Xbox services disabled" -Level Info
+    }
+
+    Apply-SystemConfig "Disable Bluetooth service" {
+        Get-Service -Name "BthHFSrv" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
+        Write-Log "Bluetooth service disabled" -Level Info
+    }
+
+    Apply-SystemConfig "Disable Game Bar service" {
+        Get-Service -Name "GamesAppIntegrationService" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
+        Write-Log "Game Bar service disabled" -Level Info
+    }
+
     Write-Log "All system optimizations completed" -Level Success
 }
