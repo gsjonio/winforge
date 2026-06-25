@@ -212,5 +212,34 @@ function Set-OptimizeConfiguration {
         Write-Log "Network throttling removed - faster updates and downloads" -Level Info
     }
 
+    # Power/Energy Optimizations (Desktop 24/7)
+    Apply-SystemConfig "Force High Performance power plan" {
+        try {
+            powercfg /setactive 8c5e7fda-e8bf-45a6-a6cc-4b3c2b40b294 2>&1 | Out-Null
+            Write-Log "High Performance power plan activated" -Level Info
+        }
+        catch {
+            Write-Log "Could not set power plan: $_" -Level Warning
+        }
+    }
+
+    Apply-SystemConfig "Disable USB Selective Suspend" {
+        Set-RegistryValue "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\PowerShell" "DisableUSBSelectiveSuspend" 1 "DWORD"
+        Set-RegistryValue "HKLM:\System\CurrentControlSet\Services\usbhub\Parameters" "DisableSelectiveSuspend" 1 "DWORD"
+        Write-Log "USB Selective Suspend disabled - instant peripherals response" -Level Info
+    }
+
+    Apply-SystemConfig "Disable Sleep/Hibernate (PC 24/7)" {
+        # Disable sleep timeout
+        powercfg /change monitor-timeout-ac 0 2>&1 | Out-Null
+        powercfg /change disk-timeout-ac 0 2>&1 | Out-Null
+        powercfg /change standby-timeout-ac 0 2>&1 | Out-Null
+
+        # Disable hibernation completely
+        powercfg /h off 2>&1 | Out-Null
+
+        Write-Log "Sleep/Hibernate disabled - PC stays fully active" -Level Info
+    }
+
     Write-Log "All system optimizations completed" -Level Success
 }
