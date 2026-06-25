@@ -70,33 +70,43 @@ function Set-ShellConfiguration {
 
         $profileContent = @'
 # ========== Oh My Posh Configuration ==========
-# Initialize Oh My Posh with dracula theme
-oh-my-posh init pwsh | Out-String | Invoke-Expression
+# Initialize Oh My Posh with dracula theme (PowerShell 7+ only)
+# Requires: winget install JanDeDobbeleer.OhMyPosh -s winget
+if ($PSVersionTable.PSVersion.Major -ge 7) {
+    if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
+        oh-my-posh init pwsh | Out-String | Invoke-Expression
+    }
+}
 
 # ========== PSReadLine Configuration ==========
-# Enable prediction source from history
-Set-PSReadLineOption -PredictionSource History
-Set-PSReadLineOption -PredictionViewStyle ListView
+# Check PowerShell version for parameter compatibility
+if ($PSVersionTable.PSVersion.Major -ge 7) {
+    # PowerShell 7+ parameters
+    Set-PSReadLineOption -PredictionSource History
+    Set-PSReadLineOption -PredictionViewStyle ListView
+} else {
+    # PowerShell 5.1 compatible - use basic setup
+    Set-PSReadLineOption -HistorySearchCursorMovesToEnd
+}
 
-# Enable Tab completion menu
-Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+# Enable Tab completion menu (works on both versions)
+Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete -ErrorAction SilentlyContinue
 
-# Advanced history search (Ctrl+R)
-Set-PSReadLineKeyHandler -Key Ctrl+r -Function ReverseSearchHistory
-Set-PSReadLineKeyHandler -Key Ctrl+s -Function ForwardSearchHistory
+# Advanced history search (Ctrl+R and Ctrl+S) - works on both versions
+Set-PSReadLineKeyHandler -Key Ctrl+r -Function ReverseSearchHistory -ErrorAction SilentlyContinue
+Set-PSReadLineKeyHandler -Key Ctrl+s -Function ForwardSearchHistory -ErrorAction SilentlyContinue
 
-# Keyboard shortcuts
-Set-PSReadLineKeyHandler -Key Ctrl+a -Function BeginningOfLine
-Set-PSReadLineKeyHandler -Key Ctrl+e -Function EndOfLine
-Set-PSReadLineKeyHandler -Key Ctrl+LeftArrow -Function BackwardWord
-Set-PSReadLineKeyHandler -Key Ctrl+RightArrow -Function ForwardWord
+# Keyboard shortcuts (works on both versions)
+Set-PSReadLineKeyHandler -Key Ctrl+a -Function BeginningOfLine -ErrorAction SilentlyContinue
+Set-PSReadLineKeyHandler -Key Ctrl+e -Function EndOfLine -ErrorAction SilentlyContinue
+Set-PSReadLineKeyHandler -Key Ctrl+LeftArrow -Function BackwardWord -ErrorAction SilentlyContinue
+Set-PSReadLineKeyHandler -Key Ctrl+RightArrow -Function ForwardWord -ErrorAction SilentlyContinue
 
 # ========== Aliases ==========
 # Useful aliases for bash-like experience
 Set-Alias -Name ll -Value Get-ChildItemLong -Force -ErrorAction SilentlyContinue
 Set-Alias -Name la -Value Get-ChildItemAll -Force -ErrorAction SilentlyContinue
 Set-Alias -Name grep -Value Select-String -Force -ErrorAction SilentlyContinue
-Set-Alias -Name touch -Value New-Item -Force -ErrorAction SilentlyContinue
 
 # ========== Custom Functions ==========
 # List files in long format
@@ -118,15 +128,15 @@ $host.ui.RawUI.WindowTitle = "PowerShell - $(Split-Path -Leaf $pwd)"
             $currentContent = Get-Content -Path $profilePath -Raw
             if ($currentContent -notlike "*Oh My Posh Configuration*") {
                 Add-Content -Path $profilePath -Value "`n`n$profileContent"
-                Write-Log "PowerShell profile updated with Oh My Posh configuration" -Level Success
+                Write-Log "PowerShell profile updated with shell configuration" -Level Success
             }
             else {
-                Write-Log "PowerShell profile already configured with Oh My Posh" -Level Skip
+                Write-Log "PowerShell profile already configured" -Level Skip
             }
         }
         else {
             Set-Content -Path $profilePath -Value $profileContent
-            Write-Log "PowerShell profile created with Oh My Posh configuration" -Level Success
+            Write-Log "PowerShell profile created with shell configuration" -Level Success
         }
     }
 
