@@ -69,10 +69,17 @@ else {
     Write-Host "Some features require administrator privileges (fonts, registry, services)." -ForegroundColor Yellow
     Write-Host "Run as admin with: powershell -NoProfile -ExecutionPolicy Bypass -File `"$($MyInvocation.MyCommand.Path)`"" -ForegroundColor Gray
     Write-Host ""
-    $continueAnyway = Read-Host "Continue without admin? (y/n)"
-    if ($continueAnyway -ne "y" -and $continueAnyway -ne "Y") {
-        Write-Log "Cancelled by user" -Level Info
-        exit 0
+
+    # Try to ask for confirmation, but continue if in NonInteractive mode
+    try {
+        $continueAnyway = Read-Host "Continue without admin? (y/n)" -ErrorAction Stop
+        if ($continueAnyway -ne "y" -and $continueAnyway -ne "Y") {
+            Write-Log "Cancelled by user" -Level Info
+            exit 0
+        }
+    }
+    catch {
+        Write-Log "NonInteractive mode detected, continuing without admin..." -Level Info
     }
 }
 
