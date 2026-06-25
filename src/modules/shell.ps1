@@ -66,6 +66,28 @@ function Set-ShellConfiguration {
         }
     }
 
+    # Download and configure Oh My Posh half-life theme
+    Apply-SystemConfig "Download Oh My Posh half-life theme" {
+        $appDataPath = $env:APPDATA
+        $ohMyPoshDir = Join-Path $appDataPath "oh-my-posh"
+        $configPath = Join-Path $ohMyPoshDir "config.json"
+
+        if (-not (Test-Path $ohMyPoshDir)) {
+            New-Item -ItemType Directory -Path $ohMyPoshDir -Force | Out-Null
+        }
+
+        try {
+            $themeUrl = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/half-life.omp.json"
+            Write-Log "Downloading half-life theme from GitHub..." -Level Info
+            $themeContent = (New-Object System.Net.WebClient).DownloadString($themeUrl)
+            $themeContent | Set-Content -Path $configPath -Encoding UTF8
+            Write-Log "Oh My Posh half-life theme configured" -Level Success
+        }
+        catch {
+            Write-Log "Failed to download theme, using default configuration: $_" -Level Warning
+        }
+    }
+
     # Create or update PowerShell profile
     Apply-SystemConfig "Configure PowerShell profile with Oh My Posh" {
         $profilePath = $PROFILE
@@ -80,25 +102,34 @@ function Set-ShellConfiguration {
 Clear-Host
 
 # ========== Oh My Posh Configuration ==========
-# Initialize Oh My Posh with dracula theme (PowerShell 7+ only)
+# Initialize Oh My Posh with half-life theme (PowerShell 7+ only)
 # Requires: winget install JanDeDobbeleer.OhMyPosh -s winget
 #
 # About Oh My Posh:
 # - Modern, customizable terminal prompt similar to oh-my-zsh for Linux/macOS
-# - Supports 100+ themes (dracula, nord, powerlevel10k, tokyo, catppuccin, etc)
+# - Supports 100+ themes (half-life, dracula, nord, powerlevel10k, tokyo, catppuccin, etc)
 # - Git repository status displayed automatically
 # - Cross-platform compatible (Windows, macOS, Linux)
 #
-# To change theme, edit the config path below:
-# - List themes: Get-ChildItem -Path "$(oh-my-posh get shell)/Themes"
-# - Current: dracula (dark, elegant color scheme)
-# - Alternative themes: nord, powerlevel10k, tokyo, gruvbox, catppuccin
+# Current Theme: half-life (game-inspired prompt with custom segments)
+# - runner name (user)
+# - path (directory)
+# - git branch status
+# - lambda prompt (λ)
+#
+# To change theme, download from GitHub:
+# https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 
 if ($PSVersionTable.PSVersion.Major -ge 7) {
     if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
-        # Initialize Oh My Posh with dracula theme
-        $themePath = "$(oh-my-posh get shell)/Themes/dracula.omp.json"
-        oh-my-posh init pwsh --config $themePath | Out-String | Invoke-Expression
+        # Initialize Oh My Posh with config from AppData
+        $configPath = "$env:APPDATA\oh-my-posh\config.json"
+        if (Test-Path $configPath) {
+            oh-my-posh init pwsh --config $configPath 2>$null | Out-String | Invoke-Expression
+        } else {
+            # Fallback if config doesn't exist
+            oh-my-posh init pwsh | Out-String | Invoke-Expression
+        }
     }
 }
 
