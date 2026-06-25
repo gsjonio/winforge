@@ -33,17 +33,6 @@ function Install-BasePrograms {
             WingetId = "TheDocumentFoundation.LibreOffice"
             ChocoId  = "libreoffice"
             Executable = "soffice"
-        },
-        @{
-            Name     = "WhatsApp"
-            WingetId = "WhatsApp.WhatsApp"
-            Executable = "whatsapp"
-        },
-        @{
-            Name     = "Spotify"
-            WingetId = "Spotify.Spotify"
-            ChocoId  = "spotify"
-            Executable = "spotify"
         }
     )
 
