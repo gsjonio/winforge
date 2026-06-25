@@ -25,10 +25,16 @@ function Set-RegistryValue {
             $Path -replace '^(HKCU|HKLM|HKCR|HKCC|HKU)([:\\])', '$1:\' -replace '\\\\', '\'
         }
 
-        # Ensure parent path exists
-        $parentPath = Split-Path -Parent $fullPath
-        if (-not (Test-Path -Path $parentPath -ErrorAction SilentlyContinue)) {
-            New-Item -Path $parentPath -Force -ErrorAction SilentlyContinue | Out-Null
+        # Create all parent paths recursively if they don't exist
+        $pathParts = $fullPath -split '\\'
+        $currentPath = ""
+
+        for ($i = 0; $i -lt $pathParts.Count; $i++) {
+            $currentPath = if ($i -eq 0) { $pathParts[$i] } else { "$currentPath\$($pathParts[$i])" }
+
+            if (-not (Test-Path -Path $currentPath -ErrorAction SilentlyContinue)) {
+                New-Item -Path $currentPath -Force -ErrorAction SilentlyContinue | Out-Null
+            }
         }
 
         # Set registry value
