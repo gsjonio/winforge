@@ -241,5 +241,43 @@ function Set-OptimizeConfiguration {
         Write-Log "Sleep/Hibernate disabled - PC stays fully active" -Level Info
     }
 
+    # Disk/Storage Optimizations
+    Apply-SystemConfig "Disable System Restore/Shadow Copies" {
+        # Disable Volume Shadow Copy Service
+        Get-Service -Name "VSS" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
+
+        # Disable Shadow Copies via registry
+        Set-RegistryValue "HKLM:\Software\Policies\Microsoft\Windows\System" "DisableShadowCopy" 1 "DWORD"
+
+        Write-Log "System Restore disabled (frees disk space, shadows no longer created)" -Level Info
+    }
+
+    Apply-SystemConfig "Enable automatic TRIM for SSD" {
+        # Enable TRIM optimization for SSD
+        fsutil behavior set DisableDeleteNotify 0 2>&1 | Out-Null
+
+        Write-Log "Automatic TRIM enabled - SSD performance optimized" -Level Info
+    }
+
+    Apply-SystemConfig "Configure defragmentation and TRIM scheduling" {
+        # Optimize drive maintenance scheduling
+        # Run at 2 AM on Wednesdays
+        schtasks /change /tn "Microsoft\Windows\Defrag\ScheduledDefrag" /st 02:00 /d WED /ru SYSTEM 2>&1 | Out-Null
+
+        Write-Log "Disk optimization scheduled for automatic execution" -Level Info
+    }
+
+    # System Optimizations
+    Apply-SystemConfig "Disable Fast Startup" {
+        # Disable Fast Startup (hybrid boot)
+        Set-RegistryValue "HKLM:\System\CurrentControlSet\Control\Session Manager\Power" "HibernationFile" 0 "DWORD"
+        Set-RegistryValue "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" "Start_PowerButtonAction" 0 "DWORD"
+
+        # Disable fast startup via power plan
+        powercfg /change hybrid-sleep off 2>&1 | Out-Null
+
+        Write-Log "Fast Startup disabled (prevents potential conflicts)" -Level Info
+    }
+
     Write-Log "All system optimizations completed" -Level Success
 }
