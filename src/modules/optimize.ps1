@@ -201,5 +201,16 @@ function Set-OptimizeConfiguration {
         Write-Log "Storage Sense configured for automatic cleanup" -Level Info
     }
 
+    # Network Performance Optimizations (Gaming)
+    Apply-SystemConfig "Disable QoS Throttling (network bandwidth)" {
+        Set-RegistryValue "HKLM:\Software\Policies\Microsoft\Windows\Psched" "NonBestEffortLimit" 0 "DWORD"
+        Write-Log "QoS Throttling disabled - full bandwidth available" -Level Info
+    }
+
+    Apply-SystemConfig "Remove network throttling limit" {
+        Set-RegistryValue "HKLM:\SYSTEM\CurrentControlSet\Services\Psched\Parameters" "NetworkThrottlingIndex" 0xFFFFFFFF "DWORD"
+        Write-Log "Network throttling removed - faster updates and downloads" -Level Info
+    }
+
     Write-Log "All system optimizations completed" -Level Success
 }
