@@ -145,5 +145,25 @@ function Set-OptimizeConfiguration {
         Get-Service -Name "TabletInputService" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
     }
 
+    Apply-SystemConfig "Disable distributed link tracking client" {
+        Get-Service -Name "TrkWks" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
+    }
+
+    Apply-SystemConfig "Disable still image events service" {
+        Get-Service -Name "stisvc" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
+    }
+
+    Apply-SystemConfig "Disable Windows Media Player network sharing" {
+        Get-Service -Name "WMPNetworkSvc" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
+    }
+
+    Apply-SystemConfig "Disable Windows Remote Management" {
+        Get-Service -Name "WinRM" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
+    }
+
+    Apply-SystemConfig "Disable location framework service" {
+        Get-Service -Name "lfsvc" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
+    }
+
     Write-Log "All system optimizations completed" -Level Success
 }
