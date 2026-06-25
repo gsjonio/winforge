@@ -11,6 +11,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] - 2026-06-25
+
+### Added
+
+- **Customize Module** - Windows UI and shell customizations
+  - File Explorer: Show hidden files, extensions, full path, List view
+  - Context Menu: Remove "Share", add Notepad++ option
+  - Taskbar: Show all system tray icons, disable widgets, disable Cortana
+  - Start Menu: Remove recommendations and suggested apps
+  - Visual: Dark mode, remove shortcut arrows
+  - Input Devices: Mouse acceleration disable, pointer shadow, keyboard settings
+  - 18+ Registry-based UI customizations
+
+- **Updated Core**
+  - `setup.ps1` now supports "customize" group parameter
+  - `setup.ps1 -Group customize` to run UI customizations
+  - Added customize to default group execution
+
+### Changed
+
+- Enhanced `setup.ps1` to include 6th group (customize) in default run
+
+---
+
 ## [0.4.0] - 2026-06-24
 
 ### Added
@@ -192,12 +216,13 @@ Registro de todas as alterações notáveis deste projeto.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0.html).
 
-### Versão Atual: v0.4.0
+### Versão Atual: v0.5.0
 
 #### Recursos Principais
 
 - **17 Programas** organizados em 4 grupos
-- **Otimizações de Sistema** - Novo módulo com 15+ configurações de privacidade
+- **Otimizações de Sistema** - Módulo com 16+ configurações de privacidade
+- **Customizações de UI** - Novo módulo com 18+ configurações de interface
 - **Instalação Multi-método**: Winget → Chocolatey → URL customizada
 - **Validação Inteligente**: 4 métodos de detecção de instalação
 - **Suporte GPU Dual**: NVIDIA App + AMD Radeon Software
@@ -210,17 +235,18 @@ e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0
 - **Dev (4)**: VS Code, GitHub Desktop, Claude, Python
 - **Gaming (2)**: Steam, Discord
 - **Sistema (4)**: NVIDIA App, AMD Radeon, CPU-Z, HWMonitor
-- **Optimize (novo)**: Otimizações de privacidade e performance
+- **Optimize**: Otimizações de privacidade e performance
+- **Customize (novo)**: Customizações de UI e shell do Windows
 
 #### Estatísticas
 
-- **Total de commits**: 38
-- **Versões**: 14 (v0.1.0 → v0.4.0)
-- **Arquivos**: 21+
-- **Scripts PowerShell**: 11
-- **Arquivos de documentação**: 8+
-- **Linhas de código**: ~1100
-- **Linhas de documentação**: ~2500
+- **Total de commits**: 42
+- **Versões**: 15 (v0.1.0 → v0.5.0)
+- **Arquivos**: 23+
+- **Scripts PowerShell**: 12
+- **Arquivos de documentação**: 9+
+- **Linhas de código**: ~1300
+- **Linhas de documentação**: ~3000
 
 #### Taxa de Sucesso de Instalação
 

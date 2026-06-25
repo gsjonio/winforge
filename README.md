@@ -141,13 +141,14 @@ Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
 
 Configuração: `.pslintrc`
 
-### Programas Inclusos (17 total)
+### Grupos Disponíveis (6 total)
 
 **Base (7)**: Firefox, Git, VLC, WinRAR, LibreOffice, WhatsApp, Spotify
 **Dev (4)**: VS Code, GitHub Desktop, Claude, Python
 **Gaming (2)**: Steam, Discord
 **Sistema (4)**: NVIDIA App, AMD Radeon, CPU-Z, HWMonitor
-**Optimize**: System optimizations & privacy tweaks (no programs)
+**Optimize**: System optimizations & privacy tweaks (16+ configs)
+**Customize**: Windows UI & shell customizations (18+ configs)
 
 ### Início Rápido
 
@@ -156,11 +157,12 @@ Configuração: `.pslintrc`
 .\setup.ps1
 
 # Executar grupo específico
-.\setup.ps1 -Group base      # 7 programas essenciais
-.\setup.ps1 -Group dev       # 4 ferramentas desenvolvimento
-.\setup.ps1 -Group gaming    # 2 programas jogos
-.\setup.ps1 -Group system    # 4 utilitários de sistema
-.\setup.ps1 -Group optimize  # Otimizações de privacidade e performance
+.\setup.ps1 -Group base       # 7 programas essenciais
+.\setup.ps1 -Group dev        # 4 ferramentas desenvolvimento
+.\setup.ps1 -Group gaming     # 2 programas jogos
+.\setup.ps1 -Group system     # 4 utilitários de sistema
+.\setup.ps1 -Group optimize   # Otimizações de privacidade e performance
+.\setup.ps1 -Group customize  # Customizações de UI do Windows
 
 # Validar instalações
 .\tools\validate.ps1
