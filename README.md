@@ -1,4 +1,4 @@
-﻿# Windows Post-Format Automation Setup
+﻿# Windows Setup
 
 [![](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/lint.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/lint.yml)
 [![](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/validate.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/validate.yml)
