@@ -1,8 +1,5 @@
 # Windows Post-Format Automation Setup
 
-[![Lint](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/lint.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/lint.yml)
-[![Validate](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/validate.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/validate.yml)
-[![Security](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/security.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/security.yml)
 [![PowerShell 7+](https://img.shields.io/badge/PowerShell-7.0%2B-blue)](https://github.com/PowerShell/PowerShell)
 [![Release: v0.6.0](https://img.shields.io/badge/release-v0.6.0-blue)](https://github.com/gsjonio/windows-scripting-automation/releases/tag/v0.6.0)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
