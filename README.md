@@ -4,12 +4,12 @@
 [![Validate](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/validate.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/validate.yml)
 [![Security](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/security.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/security.yml)
 [![PowerShell 7+](https://img.shields.io/badge/PowerShell-7.0%2B-blue)](https://github.com/PowerShell/PowerShell)
-[![Release](https://img.shields.io/github/v/release/gsjonio/windows-scripting-automation)](https://github.com/gsjonio/windows-scripting-automation/releases/latest)
-[![License: MIT](https://img.shields.io/github/license/gsjonio/windows-scripting-automation)](LICENSE)
-[![Docs](https://img.shields.io/badge/docs-EN%2FPT--BR-orange)](README.md)
+[![Release: v0.6.0](https://img.shields.io/badge/release-v0.6.0-blue)](https://github.com/gsjonio/windows-scripting-automation/releases/tag/v0.6.0)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Docs: EN/PT-BR](https://img.shields.io/badge/docs-EN%2FPT--BR-orange)](README.md)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-gugamenezes-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/gugamenezes)
 
-🇺🇸 English · 🇧🇷 [Português](#português)
+🇺🇸 English
 
 **windows-scripting-automation**: *Automate Windows post-format setup & system optimization.*
 
@@ -120,7 +120,7 @@ sudo .\setup.ps1
 
 **Organized by responsibility** — each layer has one job:
 
-```
+```text
 setup.ps1 (entry point)
   ├─ src/utils/
   │  ├─ Logging.ps1         Color-coded log output (5 severity levels)
@@ -205,6 +205,7 @@ DiagTrack, dmwappushservice, OneSyncSvc, HvHost, SharedAccess, SysMain, StorSvc,
 CscService, DPS, TabletInputService, TrkWks, stisvc, WMPNetworkSvc, WinRM, lfsvc
 
 **Power & Performance:**
+
 - High Performance power plan (forced)
 - Sleep/Hibernation disabled (PC always active)
 - USB Selective Suspend disabled (instant peripheral response)
@@ -212,11 +213,13 @@ CscService, DPS, TabletInputService, TrkWks, stisvc, WMPNetworkSvc, WinRM, lfsvc
 - QoS Throttling disabled (full bandwidth for all apps)
 
 **Storage:**
+
 - Shadow Copies (System Restore) disabled
 - Automatic TRIM enabled for SSDs
 - Storage Sense configured (auto temp cleanup)
 
 **Visual:**
+
 - Animations and transitions disabled
 - Window transparency/blur removed
 - Tooltip animations disabled
