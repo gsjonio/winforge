@@ -1,285 +1,328 @@
-﻿# Windows Setup
+# Windows Post-Format Automation Setup
 
-[![](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/lint.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/lint.yml)
-[![](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/validate.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/validate.yml)
-[![](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/security.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/security.yml)
-[![](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/documentation.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/documentation.yml)
-[![](https://img.shields.io/badge/version-v0.5.3-blue)](https://github.com/gsjonio/windows-scripting-automation/releases/tag/v0.5.3)
-[![](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![](https://img.shields.io/badge/PowerShell-7.0%2B-blue)](https://github.com/PowerShell/PowerShell)
-[![](https://img.shields.io/badge/docs-EN%2FPT--BR-orange)](README.md)
+[![Lint](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/lint.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/lint.yml)
+[![Validate](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/validate.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/validate.yml)
+[![Security](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/security.yml/badge.svg)](https://github.com/gsjonio/windows-scripting-automation/actions/workflows/security.yml)
+[![PowerShell 7+](https://img.shields.io/badge/PowerShell-7.0%2B-blue)](https://github.com/PowerShell/PowerShell)
+[![Release](https://img.shields.io/github/v/release/gsjonio/windows-scripting-automation)](https://github.com/gsjonio/windows-scripting-automation/releases/latest)
+[![License: MIT](https://img.shields.io/github/license/gsjonio/windows-scripting-automation)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-EN%2FPT--BR-orange)](README.md)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-gugamenezes-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/gugamenezes)
 
-[English](#english) | [Português](#português)
+🇺🇸 English · 🇧🇷 [Português](#português)
 
-> **📁 Organized by Responsibility** — See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for project structure
+**windows-scripting-automation**: *Automate Windows post-format setup & system optimization.*
 
-## English
+A modular PowerShell 7+ framework for configuring Windows after clean install:
+program installation (15+ apps across 7 groups), system optimization (42+
+registry/service tweaks), UI customization, and shell enhancement with Oh My
+Posh. Smart idempotent detection, multi-method install fallback (Winget →
+Chocolatey → custom URL), and production-ready with MIT license.
 
-### Overview
+## Table of Contents
 
-A PowerShell 7+ automation framework for configuring Windows systems after a clean installation.
+- [Features](#features)
+- [Install](#install)
+- [Architecture](#architecture)
+- [Usage](#usage)
+- [Optimization Details](#optimization-details)
+- [Windows 11 Native `sudo`](#windows-11-native-sudo)
+- [Shell Enhancement](#shell-enhancement)
+- [Notes](#notes)
+- [Support](#support)
+- [Contributing](#contributing)
+- [License](#license)
 
-### Features
+## Features
 
-- **Modular groups**: Organize setups by category (base, dev, gaming, or custom)
-- **Selective execution**: Run all groups or target specific ones
-- **Idempotent**: Checks if programs are already installed
-- **Detailed logging**: Color-coded status messages
-- **Automatic elevation**: Requests administrator privileges if needed
-- **Multi-method installation**: Winget → Chocolatey → Custom URL fallback chain
-- **Smart validation**: 4-method program detection (executable, package, winget, registry)
+**Installation.** 15 programs organized in 7 modular groups (base, dev, gaming,
+system, optimize, customize, shell). Smart detection with 4 methods (executable,
+package manager, winget, registry), idempotent (safe to run multiple times),
+and 3-method fallback chain (Winget → Chocolatey → custom URL) for max success.
+
+**System Optimization.** 42+ tweaks covering services (15 disabled), power plan
+(High Performance), visual effects, network (QoS/throttling disabled), storage
+(TRIM, Shadow Copies disabled), and shell (Sleep/Hibernation off for 24/7
+active). All reversible via Windows settings.
+
+**UI Customization.** 18+ Windows Explorer and shell tweaks: dark mode, hidden
+files, file extensions visible, context menu cleanup, taskbar optimization,
+Start Menu customization, shortcut arrow removal, mouse settings.
+
+**Shell Enhancement.** PowerShell 7.6.2 with Oh My Posh (half-life game-inspired
+theme), Fira Code font (ligature support), PSReadLine (history search, autocomplete),
+and bash-like aliases (ll, la, grep).
+
+**Code Quality.** PSScriptAnalyzer linting, semantic versioning with microcommits,
+GitHub Actions CI/CD (lint, validate, security, documentation), and branch
+protection rulesets.
+
+**Bilingual.** Full EN/PT-BR documentation for docs and changelog.
+
+## Install
 
 ### Prerequisites
 
-- PowerShell 7.0+
+- PowerShell 7.0+ ([download](https://github.com/PowerShell/PowerShell/releases))
 - Windows 10/11 with administrator access
-- winget
+- winget (built-in on Windows 11, Windows App Installer on Windows 10)
 
-### Project Structure
+### Quick start
 
-```text
-src/
-├── core/          Core installation logic (Install-Program, Apply-SystemConfig)
-├── utils/         Reusable functions (Logging, Validation, Registry, System)
-└── modules/       Installation groups (base, dev, gaming)
-
-docs/              Documentation (Architecture, Examples, Validation guide)
-tools/             Utilities (validate.ps1)
-```
-
-**See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for detailed architecture.**
-
-### Code Quality
-
-PowerShell linting with **PSScriptAnalyzer**:
+Clone and run with admin:
 
 ```powershell
-# Install analyzer (one-time)
-Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
-
-# Check code quality
-.\tools\lint.ps1              # Lint all scripts
-.\tools\lint.ps1 -Path .\src  # Lint src directory
-.\tools\lint.ps1 -Severity Error  # Only show errors
+git clone https://github.com/gsjonio/windows-scripting-automation.git
+cd windows-scripting-automation
+sudo .\setup.ps1
 ```
 
-Configuration: `.pslintrc`
-
-### Quick Start
+Or run a specific group:
 
 ```powershell
-# Run all groups
-.\setup.ps1
+sudo .\setup.ps1 -Group shell      # Just shell enhancement
+sudo .\setup.ps1 -Group optimize   # Just system optimizations
+```
 
-# Run specific group
-.\setup.ps1 -Group dev
-.\setup.ps1 -Group gaming
+### Privileges by command
 
-# Validate installations
+| Command | Privilege | Notes |
+| --- | --- | --- |
+| `setup.ps1` (all groups) | Admin | Services, registry, fonts, power plan |
+| `setup.ps1 -Group base/dev/gaming/system` | Admin | Program installation |
+| `setup.ps1 -Group optimize/customize/shell` | Admin | Registry, services, fonts |
+| `.\tools\lint.ps1` | None | Code quality check |
+| `.\tools\validate.ps1` | None | Installation verification |
+
+Windows 11 users: enable native `sudo` in Settings → System → For developers
+→ Terminal → "Enable sudo" to avoid UAC prompts. See [Windows 11 Native
+`sudo`](#windows-11-native-sudo) below.
+
+### Build from source
+
+If you want to modify or inspect the code:
+
+```powershell
+git clone https://github.com/gsjonio/windows-scripting-automation.git
+cd windows-scripting-automation
+
+# Lint all PowerShell
+.\tools\lint.ps1
+
+# Validate scripts
 .\tools\validate.ps1
+
+# Run setup
+sudo .\setup.ps1
 ```
 
-### Documentation
+## Architecture
 
-- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Project structure and design
-- **[EXAMPLES.md](docs/EXAMPLES.md)** - How to add programs and configurations
-- **[VALIDATION.md](docs/VALIDATION.md)** - Installation validation guide
-- **[STRUCTURE.md](docs/STRUCTURE.md)** - Quick reference of all files
-- **[CLEANUP.md](docs/CLEANUP.md)** - How to clean up old files (if upgrading)
+**Organized by responsibility** — each layer has one job:
 
----
-
-## Português
-
-### Visão Geral
-
-Um framework de automação PowerShell 7+ para configurar sistemas Windows após instalação limpa.
-
-### Características
-
-- **Grupos modulares**: Organize por categoria (base, dev, gaming, system)
-- **Execução seletiva**: Execute todos os grupos ou apenas os que precisa
-- **Idempotente**: Verifica se programas já estão instalados
-- **Logging detalhado**: Mensagens coloridas com status
-- **Elevação automática**: Solicita privilégios de administrador quando necessário
-- **Instalação multi-método**: Winget → Chocolatey → URL customizada
-- **Validação inteligente**: 4 métodos de detecção de instalação
-
-### Pré-requisitos
-
-- PowerShell 7.0+
-- Windows 10/11 com acesso administrativo
-- winget
-
-### Estrutura do Projeto
-
-```text
-src/
-├── core/          Lógica de instalação (Install-Program, Set-SystemConfig)
-├── utils/         Funções reutilizáveis (Logging, Validation, Registry, System)
-└── modules/       Grupos de instalação (base, dev, gaming, system)
-
-docs/              Documentação (Arquitetura, Exemplos, Guia de Validação)
-tools/             Utilitários (lint.ps1, validate.ps1)
+```
+setup.ps1 (entry point)
+  ├─ src/utils/
+  │  ├─ Logging.ps1         Color-coded log output (5 severity levels)
+  │  ├─ System.ps1          UAC elevation, admin checks
+  │  ├─ Validation.ps1      Program detection (4 methods)
+  │  └─ Registry.ps1        Registry operations with path creation
+  ├─ src/core/
+  │  └─ Installation.ps1    Install-Program, 3-method fallback
+  └─ src/modules/           Group handlers
+     ├─ base.ps1           5 essential programs
+     ├─ dev.ps1            4 dev tools
+     ├─ gaming.ps1         2 gaming apps
+     ├─ system.ps1         4 system utilities
+     ├─ optimize.ps1       42 system tweaks
+     ├─ customize.ps1      18 UI customizations
+     └─ shell.ps1          Oh My Posh + Fira Code
 ```
 
-**Veja [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) para arquitetura detalhada.**
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for full breakdown.
 
-### Qualidade de Código
+## Usage
 
-Linting PowerShell com **PSScriptAnalyzer**:
+### Run all groups
 
 ```powershell
-# Instalar analisador (uma única vez)
-Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
+# Windows 11 with sudo enabled
+sudo .\setup.ps1
 
-# Verificar qualidade do código
-.\tools\lint.ps1              # Lint de todos os scripts
-.\tools\lint.ps1 -Path .\src  # Lint no diretório src
-.\tools\lint.ps1 -Severity Error  # Apenas erros
-```
-
-Configuração: `.pslintrc`
-
-### Grupos Disponíveis (7 total, 15 programas)
-
-**Base (5)**: Firefox, Git, VLC, WinRAR, LibreOffice
-**Dev (4)**: VS Code, GitHub Desktop, Claude, Python
-**Gaming (2)**: Steam, Discord
-**Sistema (4)**: NVIDIA App, AMD Radeon, CPU-Z, HWMonitor
-**Optimize**: System optimizations & privacy tweaks (16+ configs)
-**Customize**: Windows UI & shell customizations (18+ configs)
-**Shell**: PowerShell enhancement with Oh My Posh (half-life theme) + Fira Code
-
-### Início Rápido
-
-```powershell
-# Executar todos os grupos (17 programas)
-.\setup.ps1
-
-# Executar com privilégios de administrador
+# Or fallback
 powershell -NoProfile -ExecutionPolicy Bypass -File ".\setup.ps1"
-
-# Ou executar grupo específico
-.\setup.ps1 -Group base       # 5 programas essenciais
-.\setup.ps1 -Group dev        # 4 ferramentas desenvolvimento
-.\setup.ps1 -Group gaming     # 2 programas jogos
-.\setup.ps1 -Group system     # 4 utilitários de sistema
-.\setup.ps1 -Group optimize   # Otimizações de privacidade e performance
-.\setup.ps1 -Group customize  # Customizações de UI do Windows
-.\setup.ps1 -Group shell      # Oh My Posh + Fira Code + customizações PowerShell
-
-# Validar instalações
-.\tools\validate.ps1
 ```
 
-### Windows 11 Native `sudo` Support
+### Run specific group
 
-Windows 11 (22H2+) supports native `sudo` command - no need for `Start-Process -Verb RunAs`!
+```powershell
+sudo .\setup.ps1 -Group base       # Install 5 essential programs
+sudo .\setup.ps1 -Group optimize   # Apply 42 system optimizations
+sudo .\setup.ps1 -Group shell      # Install Oh My Posh + Fira Code
+```
 
-**Enable sudo:**
+### Available groups
+
+| Group | What | Programs/Tweaks |
+| --- | --- | --- |
+| **base** | Essential programs | Firefox, Git, VLC, WinRAR, LibreOffice (5) |
+| **dev** | Development tools | VS Code, GitHub Desktop, Claude, Python (4) |
+| **gaming** | Gaming apps | Steam, Discord (2) |
+| **system** | System utilities | NVIDIA App, AMD Radeon, CPU-Z, HWMonitor (4) |
+| **optimize** | System tweaks | 42 optimizations (services, power, network, storage) |
+| **customize** | UI customizations | 18 Windows/shell tweaks |
+| **shell** | Terminal enhancement | Oh My Posh (half-life theme) + Fira Code |
+
+### Code quality
+
+```powershell
+# Lint all PowerShell scripts
+.\tools\lint.ps1
+
+# Lint specific directory
+.\tools\lint.ps1 -Path .\src
+
+# Show errors only
+.\tools\lint.ps1 -Severity Error
+```
+
+### Validation
+
+```powershell
+# Check installation status of all programs
+.\tools\validate.ps1
+
+# Verify what's installed
+Get-Package | Where-Object { $_.Name -like "*firefox*" }
+```
+
+## Optimization Details
+
+### What gets optimized
+
+**Services disabled (15):**
+DiagTrack, dmwappushservice, OneSyncSvc, HvHost, SharedAccess, SysMain, StorSvc,
+CscService, DPS, TabletInputService, TrkWks, stisvc, WMPNetworkSvc, WinRM, lfsvc
+
+**Power & Performance:**
+- High Performance power plan (forced)
+- Sleep/Hibernation disabled (PC always active)
+- USB Selective Suspend disabled (instant peripheral response)
+- Network Throttling removed (faster updates)
+- QoS Throttling disabled (full bandwidth for all apps)
+
+**Storage:**
+- Shadow Copies (System Restore) disabled
+- Automatic TRIM enabled for SSDs
+- Storage Sense configured (auto temp cleanup)
+
+**Visual:**
+- Animations and transitions disabled
+- Window transparency/blur removed
+- Tooltip animations disabled
+- Dark mode enabled
+
+**UI Customization (18 tweaks):**
+File Explorer (hidden files, extensions, full path), context menu cleanup, taskbar
+optimization, Start Menu customization, keyboard/mouse settings.
+
+### Is it reversible?
+
+Yes — all changes use standard Windows registry/services/settings. Reverse any
+tweak via Settings, Services.msc, Registry Editor, or GPEdit. Most come with
+undo instructions in [`docs/OPTIMIZE.md`](docs/OPTIMIZE.md).
+
+## Windows 11 Native `sudo`
+
+Windows 11 22H2+ includes native `sudo` — no need for `Start-Process -Verb RunAs`.
+
+**Enable it:**
 
 1. Open **Settings** → **System** → **For developers**
 2. Scroll to **Terminal** section
-3. Toggle **"Habilitar sudo"** (Enable sudo) **ON**
+3. Toggle **"Enable sudo"** ON
 
-**Usage:**
+**Use it:**
 
 ```powershell
-# Run script with admin privileges
 sudo .\setup.ps1
-
-# Run specific group
 sudo .\setup.ps1 -Group shell
-
-# Run any command as admin
 sudo Get-Process
-sudo code
 ```
 
-**Info:** This mimics Linux/macOS `sudo` behavior, making scripts more portable across platforms.
+Mimics Linux/macOS behavior; no UAC prompt on every admin command.
 
-### Oh My Posh with Half-Life Theme
+## Shell Enhancement
 
-The **shell** group installs **Oh My Posh** with the **half-life** theme (a modern, game-inspired prompt).
+The **shell** group installs:
 
-**Features:**
+- **Oh My Posh 29.18.0** with half-life game-inspired theme (custom segments:
+  user, path, git branch, timestamp)
+- **Fira Code font** (7 variants, perfect ligature rendering)
+- **PSReadLine** (history search with Ctrl+R/Ctrl+S, autocomplete)
+- **Bash-like aliases**: `ll` (list), `la` (list all), `grep` (search)
+- **Keyboard shortcuts**: Ctrl+A (line start), Ctrl+E (line end), word jump
 
-- 🎮 Game-inspired prompt with custom segments
-- 🔄 Git repository status (branch, changes)
-- 🔤 User name and directory display
-- ⏱️ Timestamps and command status
-- 🎨 Fira Code font with perfect ligature rendering
-- ⚙️ Fully customizable via JSON configuration
-
-**Install shell enhancement:**
+Install with:
 
 ```powershell
 sudo .\setup.ps1 -Group shell
 ```
 
-**Customize theme:** Edit `$env:APPDATA\oh-my-posh\config.json`
+Then open a new PowerShell 7.6.2 window to see the enhanced prompt.
 
-**Available themes:** 100+ themes at [ohmyposh.dev/docs/themes](https://ohmyposh.dev/docs/themes)
+Change themes: Edit `$env:APPDATA\oh-my-posh\config.json`. 100+ themes at
+[ohmyposh.dev/docs/themes](https://ohmyposh.dev/docs/themes).
 
----
+## Notes
 
-### Português - Suporte `sudo` Nativo do Windows 11
+### Installation success rates
 
-Windows 11 (22H2+) suporta comando `sudo` nativo - sem precisa usar `Start-Process -Verb RunAs`!
+| Method | Success |
+| --- | --- |
+| Winget only | ~70% |
+| Winget + Chocolatey | ~95% |
+| All 3 (+ custom URL) | ~99% |
 
-**Ativar sudo:**
+### Platform support
 
-1. Abra **Configurações** → **Sistema** → **Para desenvolvedores**
-2. Role até a seção **Terminal**
-3. Ative **"Habilitar sudo"** com o toggle
+- **Windows** is primary and fully tested (10/11, both 64-bit)
+- **Linux** (WSL2) partially supported for some commands
+- Requires PowerShell 7.0+ (works with 5.1 but not all features)
 
-**Uso:**
+### About the code
 
-```powershell
-# Executar script com privilégios admin
-sudo .\setup.ps1
+- **60+ commits** with conventional messages (feat, fix, docs, chore)
+- **Semantic versioning** (MAJOR.MINOR.PATCH)
+- **GitHub Actions** (6 workflows) for lint, validate, security, release
+- **PSScriptAnalyzer** configured in `.pslintrc` for code quality
+- **MIT licensed** — free to use, modify, distribute
 
-# Executar grupo específico
-sudo .\setup.ps1 -Group shell
+## Documentation
 
-# Executar qualquer comando como admin
-sudo Get-Process
-sudo code
-```
+Full guides for each component:
 
-**Info:** Isso imita o comportamento de `sudo` do Linux/macOS, tornando scripts mais portáveis entre plataformas.
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** — Project structure & design
+- **[ADMIN-PRIVILEGES.md](docs/ADMIN-PRIVILEGES.md)** — 4 ways to elevate
+- **[SHELL.md](docs/SHELL.md)** — Oh My Posh & Fira Code setup
+- **[OPTIMIZE.md](docs/OPTIMIZE.md)** — 42 tweaks explained + how to undo
+- **[CUSTOMIZE.md](docs/CUSTOMIZE.md)** — UI changes explained
+- **[EXAMPLES.md](docs/EXAMPLES.md)** — How to add programs
+- **[VALIDATION.md](docs/VALIDATION.md)** — Installation checks
+- **[CHANGELOG.md](CHANGELOG.md)** — Version history (EN & PT-BR)
 
-### Oh My Posh com Tema Half-Life
+## Support
 
-O grupo **shell** instala **Oh My Posh** com o tema **half-life** (um prompt moderno e inspirado em jogos).
+This project is free and open source. If it saves you setup time, you can
+support development:
 
-**Características:**
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-gugamenezes-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/gugamenezes)
 
-- 🎮 Prompt inspirado em games com segmentos customizados
-- 🔄 Status do repositório Git (branch, alterações)
-- 🔤 Exibição de usuário e diretório
-- ⏱️ Timestamps e status de comando
-- 🎨 Fonte Fira Code com renderização perfeita de ligaduras
-- ⚙️ Totalmente customizável via configuração JSON
+## Contributing
 
-**Instalar aprimoramento do shell:**
+Want to contribute? See [CONTRIBUTING.md](CONTRIBUTING.md). This project follows
+the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-```powershell
-sudo .\setup.ps1 -Group shell
-```
+## License
 
-**Customizar tema:** Edite `$env:APPDATA\oh-my-posh\config.json`
-
-**Temas disponíveis:** 100+ temas em [ohmyposh.dev/docs/themes](https://ohmyposh.dev/docs/themes)
-
----
-
-### Documentação
-
-- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Estrutura e design do projeto
-- **[EXAMPLES.md](docs/EXAMPLES.md)** - Como adicionar programas e configurações
-- **[VALIDATION.md](docs/VALIDATION.md)** - Guia de validação de instalação
-- **[STRUCTURE.md](docs/STRUCTURE.md)** - Referência rápida de todos os arquivos
-- **[CLEANUP.md](docs/CLEANUP.md)** - Como limpar arquivos antigos (ao atualizar)
-- **[GITHUB-ACTIONS.md](docs/GITHUB-ACTIONS.md)** - Guia de automação CI/CD
+[MIT](LICENSE)
