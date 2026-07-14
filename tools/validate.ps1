@@ -5,74 +5,102 @@
     Validate installation status of programs before running setup
 
     .DESCRIPTION
-    Checks if programs are already installed using multiple detection methods:
-    - Executable command availability
-    - Windows Package Manager (Get-Package)
-    - Windows Registry (Uninstall keys)
-    - Winget list command
+    Checks if the programs declared in each module are already installed,
+    using multiple detection methods (executable, Get-Package, winget, registry).
+    Program lists are read directly from the module files via AST parsing, so
+    nothing is installed and the module functions are never executed.
 
     .PARAMETER Group
-    Specific group to validate: base, dev, gaming
+    Specific group to validate. Omit to validate all groups.
 
-    .PARAMETER Verbose
-    Show detailed detection information
+    .PARAMETER ShowDetails
+    Show detailed detection information (method + version).
+
+    .EXAMPLE
+    .\validate.ps1 -Group dev -ShowDetails
 #>
 
 param(
     [Parameter(Mandatory = $false)]
-    [ValidateSet("base", "dev", "gaming")]
+    [ValidateSet("base", "dev", "gaming", "system", "optimize", "customize", "shell")]
     [string]$Group,
 
-    [switch]$Verbose
+    [switch]$ShowDetails
 )
 
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
-$libPath = Join-Path $scriptRoot "lib"
-$groupsPath = Join-Path $scriptRoot "groups"
+$repoRoot = Split-Path -Parent $scriptRoot
+$utilsPath = Join-Path $repoRoot "src\utils"
+$modulesPath = Join-Path $repoRoot "src\modules"
 
-. "$libPath\helpers.ps1"
+# Detection + reporting helpers live in the shared utils
+. "$utilsPath\Logging.ps1"
+. "$utilsPath\Validation.ps1"
 
-Write-Host ""
-Write-Host "Program Installation Validator" -ForegroundColor Cyan
-Write-Host "===============================" -ForegroundColor Cyan
-Write-Host ""
+# Extract the program hashtables (@{ Name=..; WingetId=..; Executable=.. }) from a
+# module file without running it. Only literal string values are supported, which
+# is all the modules use.
+function Get-ModulePrograms {
+    param([string]$ModuleFile)
 
-$groupsToValidate = if ($Group) { @($Group) } else { @("base", "dev", "gaming") }
+    $ast = [System.Management.Automation.Language.Parser]::ParseFile($ModuleFile, [ref]$null, [ref]$null)
+    $hashAsts = $ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.HashtableAst] }, $true)
 
-foreach ($groupName in $groupsToValidate) {
-    $groupFile = Join-Path $groupsPath "$groupName.ps1"
-
-    if (Test-Path -Path $groupFile) {
-        Write-Host ""
-        Write-GroupHeader "$($groupName.ToUpper()) - Validation"
-
-        # Source the group file
-        . $groupFile
-
-        # Get programs array from the group
-        $programs = @()
-        $installFunc = "Install-$($groupName)Programs"
-
-        # Extract programs by reading the file (simplified approach)
-        try {
-            # Read group file content to extract programs
-            $content = Get-Content -Path $groupFile -Raw
-
-            # This is a simplified approach - in practice, you'd need to invoke the function
-            # and capture the programs array
-            Write-Log "Validating programs in $groupName group..." -Level Info
-
-            # For now, show instruction for manual validation
-            Write-Host "To validate, uncomment programs in $groupFile and run this script again" -ForegroundColor Yellow
+    foreach ($hash in $hashAsts) {
+        $entry = @{}
+        foreach ($pair in $hash.KeyValuePairs) {
+            $key = $pair.Item1.Value
+            $valueAst = $pair.Item2.PipelineElements[0].Expression
+            if ($valueAst -is [System.Management.Automation.Language.StringConstantExpressionAst]) {
+                $entry[$key] = $valueAst.Value
+            }
         }
-        catch {
-            Write-Log "Error validating group: $_" -Level Error
+        # A program entry is any hashtable that names a winget package
+        if ($entry.ContainsKey("WingetId")) {
+            [PSCustomObject]@{
+                Name       = $entry["Name"]
+                Executable = $entry["Executable"]
+                WingetId   = $entry["WingetId"]
+            }
         }
     }
 }
 
 Write-Host ""
-Write-Log "To validate specific programs, use:" -Level Info
-Write-Host "  PS> . .\lib\helpers.ps1" -ForegroundColor Gray
-Write-Host "  PS> Get-InstallationStatus -ProgramName 'Git' -Executable 'git' -WingetId 'Git.Git'" -ForegroundColor Gray
+Write-Host "Program Installation Validator" -ForegroundColor Cyan
+Write-Host "===============================" -ForegroundColor Cyan
+
+$groupsToValidate = if ($Group) { @($Group) } else {
+    @("base", "dev", "gaming", "system", "optimize", "customize", "shell")
+}
+
+$grandTotal = @{ Total = 0; Installed = 0; NotInstalled = 0 }
+
+foreach ($groupName in $groupsToValidate) {
+    $moduleFile = Join-Path $modulesPath "$groupName.ps1"
+
+    if (-not (Test-Path -Path $moduleFile)) {
+        Write-Log "Module file not found: $moduleFile" -Level Error
+        continue
+    }
+
+    Write-GroupHeader "$($groupName.ToUpper()) - Validation"
+
+    $programs = @(Get-ModulePrograms -ModuleFile $moduleFile)
+
+    if ($programs.Count -eq 0) {
+        Write-Log "No installable programs in '$groupName' (configuration-only group)" -Level Skip
+        continue
+    }
+
+    $result = Show-InstallationReport -Programs $programs -ShowDetails:$ShowDetails
+    $grandTotal.Total += $result.Total
+    $grandTotal.Installed += $result.Installed
+    $grandTotal.NotInstalled += $result.NotInstalled
+}
+
+Write-Host ""
+Write-Host "=======================================================================" -ForegroundColor Cyan
+Write-Host "  OVERALL: $($grandTotal.Total) checked | $($grandTotal.Installed) installed | $($grandTotal.NotInstalled) missing" -ForegroundColor Cyan
+Write-Host "=======================================================================" -ForegroundColor Cyan
 Write-Host ""
