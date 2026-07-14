@@ -17,7 +17,7 @@ function Set-RegistryValue {
     )
 
     try {
-        # Handle both formats: "HKCU:\path" and "HKCU:\path"
+        # Normalize both forms: "HKCU\path" and "HKCU:\path" to provider format
         $fullPath = if ($Path.Contains(':\')) {
             $Path  # Already has provider format
         } else {
@@ -60,27 +60,16 @@ function Get-RegistryValue {
     )
 
     try {
-        $regPath = $Path -replace '^HKEY_', ''
-        $hive = $regPath.Split('\')[0]
-
-        $hiveName = @{
-            "HKEY_LOCAL_MACHINE" = "HKLM"
-            "HKEY_CURRENT_USER"  = "HKCU"
-            "HKEY_CLASSES_ROOT"  = "HKCR"
-            "HKEY_CURRENT_CONFIG" = "HKCC"
-            "HKEY_USERS"         = "HKU"
-            "HKLM"               = "HKLM"
-            "HKCU"               = "HKCU"
-            "HKCR"               = "HKCR"
-            "HKCC"               = "HKCC"
-            "HKU"                = "HKU"
-        }[$hive]
-
-        $subPath = ($regPath -split '\\', 2)[1]
-        $fullPath = "$($hiveName):\$subPath"
+        # Normalize to provider format, matching Set-RegistryValue
+        $fullPath = if ($Path.Contains(':\')) {
+            $Path
+        } else {
+            $Path -replace '^(HKCU|HKLM|HKCR|HKCC|HKU)([:\\])', '$1:\' -replace '\\\\', '\'
+        }
 
         $value = Get-ItemProperty -Path $fullPath -Name $Name -ErrorAction SilentlyContinue
-        return if ($value) { $value.$Name } else { $DefaultValue }
+        if ($value) { return $value.$Name }
+        return $DefaultValue
     }
     catch {
         return $DefaultValue
