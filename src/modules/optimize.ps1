@@ -242,16 +242,8 @@ function Set-OptimizeConfiguration {
     }
 
     # Disk/Storage Optimizations
-    Apply-SystemConfig "Disable System Restore/Shadow Copies" {
-        # Disable Volume Shadow Copy Service
-        Get-Service -Name "VSS" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
-
-        # Disable Shadow Copies via registry
-        Set-RegistryValue "HKLM:\Software\Policies\Microsoft\Windows\System" "DisableShadowCopy" 1 "DWORD"
-
-        Write-Log "System Restore disabled (frees disk space, shadows no longer created)" -Level Info
-    }
-
+    # NOTE: VSS / System Restore is intentionally NOT disabled. Disabling it
+    # removes rollback (System Restore) and breaks VSS-based backups (issue #8).
     Apply-SystemConfig "Enable automatic TRIM for SSD" {
         # Enable TRIM optimization for SSD
         fsutil behavior set DisableDeleteNotify 0 2>&1 | Out-Null
