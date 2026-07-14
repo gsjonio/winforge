@@ -21,41 +21,48 @@ The `optimize` module applies 15+ system optimizations and privacy tweaks via Wi
 ### Optimizations Applied
 
 #### Telemetry & Data Collection
+
 - ✅ Disable diagnostic data collection (AllowDiagnosticData = 0)
 - ✅ Disable DiagTrack service
 - ✅ Disable consumer experiences tracking
 
 #### Background Activities
+
 - ✅ Disable background application activity
 - ✅ Disable tailored experiences and suggestions
 - ✅ Disable automatic driver installation
 - ✅ Disable Multimedia Class Scheduler (if RAM ≥ 8GB)
 
 #### Microsoft Services
+
 - ✅ Disable Find My Device feature
 - ✅ Disable Activity History sync
 - ✅ Disable settings synchronization (Accessibility, Apps, Personalization, StartLayout)
 - ✅ Disable Cortana assistance
 
 #### Installation & Updates
+
 - ✅ Disable App Installer (Push Installation service)
 - ✅ Disable automatic update notifications
 - ✅ Disable Windows Update automatic downloads
 
 #### User Experience
+
 - ✅ Disable Problem Steps Recorder (PSR)
 - ✅ Disable File Explorer quick access insights
 - ✅ Disable recent documents history in Start menu
 - ✅ Disable web content evaluation in Microsoft Edge
 
 #### Security Features
+
 - ✅ Disable Windows Defender SmartScreen (off)
 - ✅ Configure privacy policies
 
 ### Registry Locations Modified
 
 **HKEY_CURRENT_USER (User Settings)**
-```
+
+```text
 Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack
 Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications
 Software\Microsoft\Windows\CurrentVersion\Settings\Privacy\General
@@ -68,7 +75,8 @@ Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
 ```
 
 **HKEY_LOCAL_MACHINE (System Settings)**
-```
+
+```text
 SOFTWARE\Policies\Microsoft\Windows\DataCollection
 SOFTWARE\Policies\Microsoft\Windows\AppInstaller
 SOFTWARE\Policies\Microsoft\Windows\System
@@ -81,6 +89,7 @@ SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer
 ### Reversibility
 
 All optimizations use standard Windows Registry keys and can be reversed by:
+
 1. Manually restoring registry values via regedit
 2. Using Group Policy Editor (gpedit.msc) to revert settings
 3. Reinstalling Windows (clean slate)
@@ -131,40 +140,47 @@ O módulo `optimize` aplica 15+ otimizações de sistema e ajustes de privacidad
 ### Otimizações Aplicadas
 
 #### Telemetria & Coleta de Dados
+
 - ✅ Desabilitar coleta de dados de diagnóstico
 - ✅ Desabilitar serviço DiagTrack
 - ✅ Desabilitar rastreamento de experiências de consumidor
 
 #### Atividades em Background
+
 - ✅ Desabilitar atividade de aplicativos em segundo plano
 - ✅ Desabilitar experiências e sugestões personalizadas
 - ✅ Desabilitar instalação automática de drivers
 - ✅ Desabilitar Multimedia Class Scheduler (se RAM ≥ 8GB)
 
 #### Serviços Microsoft
+
 - ✅ Desabilitar recurso Localizar Meu Dispositivo
 - ✅ Desabilitar sincronização do Histórico de Atividades
 - ✅ Desabilitar sincronização de configurações
 - ✅ Desabilitar Cortana
 
 #### Instalação & Atualizações
+
 - ✅ Desabilitar serviço de Push Installation
 - ✅ Desabilitar notificações de atualização automática
 - ✅ Desabilitar downloads automáticos do Windows Update
 
 #### Experiência do Usuário
+
 - ✅ Desabilitar Gravador de Passos (PSR)
 - ✅ Desabilitar insights de acesso rápido no Explorador
 - ✅ Desabilitar histórico de documentos recentes no menu Iniciar
 - ✅ Desabilitar avaliação de conteúdo web no Microsoft Edge
 
 #### Recursos de Segurança
+
 - ✅ Desabilitar Windows Defender SmartScreen
 - ✅ Configurar políticas de privacidade
 
 ### Reversibilidade
 
 Todas as otimizações usam chaves padrão do Registro do Windows e podem ser revertidas:
+
 1. Manualmente restaurando valores via regedit
 2. Usando o Editor de Política de Grupo (gpedit.msc)
 3. Reinstalando Windows

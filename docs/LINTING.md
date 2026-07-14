@@ -59,7 +59,7 @@ Configuration file: `.pslintrc`
 Standard PowerShell best practices:
 
 | Category | Rules |
-|----------|-------|
+| ---------- | ------- |
 | **Style** | Indentation, whitespace, assignment alignment |
 | **Best Practices** | Approved verbs, variable usage, implicit conversion |
 | **Performance** | Avoid Invoke-Expression, optimize patterns |
@@ -77,6 +77,7 @@ Standard PowerShell best practices:
 ### Issue: "PSScriptAnalyzer not installed"
 
 **Solution:**
+
 ```powershell
 Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
 ```
@@ -84,6 +85,7 @@ Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
 ### Issue: "NuGet provider is required"
 
 **Solution:**
+
 ```powershell
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
@@ -95,7 +97,7 @@ Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
 
 ## Example Output
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   PowerShell Script Analysis
 ═══════════════════════════════════════════════════════════
@@ -117,7 +119,7 @@ Warning:
 ## Rule Severity Levels
 
 | Level | Impact |
-|-------|--------|
+| ------- | -------- |
 | **Error** | Code won't work / security issue / high impact |
 | **Warning** | Style issue / minor problem / best practice |
 | **Information** | Suggestion / alternative approach |
@@ -164,8 +166,8 @@ Run linting in CI/CD pipeline:
 
 ## References
 
-- **PSScriptAnalyzer Rules**: https://github.com/PowerShell/PSScriptAnalyzer
-- **PowerShell Best Practices**: https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/cmdlet-development-guidelines
+- **PSScriptAnalyzer Rules**: <https://github.com/PowerShell/PSScriptAnalyzer>
+- **PowerShell Best Practices**: <https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/cmdlet-development-guidelines>
 - **Configuration Reference**: See `.pslintrc` in project root
 
 ## Questions?

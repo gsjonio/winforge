@@ -5,7 +5,8 @@ The project has been reorganized from a flat structure to a **responsibility-bas
 ## What Changed
 
 ### New Structure (Current)
-```
+
+```text
 src/
 ├── core/        # Installation logic
 ├── utils/       # Reusable functions
@@ -16,7 +17,8 @@ tools/           # Utilities
 ```
 
 ### Old Structure (Deprecated)
-```
+
+```text
 lib/             # ← MOVE to src/utils/
 groups/          # ← MOVE to src/modules/
 ```
@@ -41,7 +43,7 @@ rm validate.ps1     # → Moved to tools/validate.ps1
 ## Files to Keep
 
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `setup.ps1` | Main entry point - **DO NOT DELETE** |
 | `README.md` | Main documentation |
 | `CLEANUP.md` | This file (can be deleted after cleanup) |
@@ -83,7 +85,7 @@ $oldFiles | ForEach-Object {
 
 Your project will be clean and organized:
 
-```
+```text
 win-setup/
 ├── setup.ps1
 ├── README.md
@@ -111,6 +113,7 @@ win-setup/
 - Just better organized for maintainability
 
 **Setup.ps1 command:**
+
 ```powershell
 .\setup.ps1                    # Run all groups
 .\setup.ps1 -Group dev         # Run specific group

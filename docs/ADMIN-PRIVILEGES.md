@@ -51,6 +51,7 @@ function sudo {
 ```
 
 **Usage:**
+
 ```powershell
 sudo .\setup.ps1
 sudo .\setup.ps1 -Group optimize
@@ -80,7 +81,7 @@ Write-Host "Running with administrator privileges!"
 ### Understanding the Parameters
 
 | Parameter | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `-NoProfile` | Skip loading the user's profile (faster) |
 | `-ExecutionPolicy Bypass` | Allow unsigned scripts to run (temporary) |
 | `-File` | Execute a script file |
@@ -97,6 +98,7 @@ Write-Host "Running with administrator privileges!"
 ### Why Admin Privileges Are Needed
 
 The setup script requires admin privileges for:
+
 - ✅ Installing fonts (`C:\Windows\Fonts\`)
 - ✅ Modifying system registry
 - ✅ Installing Windows features
@@ -170,6 +172,7 @@ function sudo {
 ```
 
 **Uso:**
+
 ```powershell
 sudo .\setup.ps1
 sudo .\setup.ps1 -Group optimize
@@ -199,7 +202,7 @@ Write-Host "Executando com privilégios de administrador!"
 ### Entendendo os Parâmetros
 
 | Parâmetro | Propósito |
-|-----------|----------|
+| ----------- | ---------- |
 | `-NoProfile` | Pula o carregamento do perfil do usuário (mais rápido) |
 | `-ExecutionPolicy Bypass` | Permite executar scripts não assinados (temporário) |
 | `-File` | Executa um arquivo de script |
@@ -216,6 +219,7 @@ Write-Host "Executando com privilégios de administrador!"
 ### Por Que Privilégios de Admin São Necessários
 
 O script de setup necessita privilégios de admin para:
+
 - ✅ Instalar fontes (`C:\Windows\Fonts\`)
 - ✅ Modificar registro do sistema
 - ✅ Instalar recursos do Windows

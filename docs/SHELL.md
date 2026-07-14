@@ -21,17 +21,20 @@ The `shell` module transforms PowerShell into a modern, feature-rich terminal ex
 ### Features Installed
 
 #### 1. Oh My Posh
+
 - Modern, customizable prompt with themes (dracula, nord, powerlevel10k, etc)
 - Git repository status display
 - Directory indicators and visual cues
 - Multi-line prompt support
 
 #### 2. Fira Code Font
+
 - Modern monospace font designed for code
 - Ligature support for operators (==, =>, ->, etc)
 - Better readability for programming
 
 #### 3. PSReadLine Enhancements
+
 - **History Search**: Ctrl+R for reverse search, Ctrl+S for forward search
 - **Tab Completion**: Tab key shows interactive menu (like bash)
 - **Prediction**: Shows suggestions from command history
@@ -42,23 +45,27 @@ The `shell` module transforms PowerShell into a modern, feature-rich terminal ex
   - Ctrl+RightArrow: Jump forward one word
 
 #### 4. Custom Aliases (bash-like)
+
 - `ll` - List files in long format
 - `la` - List all files including hidden
 - `grep` - PowerShell equivalent of grep
 - `touch` - Create empty files
 
 #### 5. Windows Terminal Integration
+
 - Auto-configures Windows Terminal to use Fira Code
 - Font size set to 10pt (adjustable)
 
 ### What Gets Configured
 
 **PowerShell Profile ($PROFILE)**
-```
+
+```text
 ~\Documents\PowerShell\profile.ps1
 ```
 
 The module creates or updates this file with:
+
 - Oh My Posh initialization
 - PSReadLine configuration
 - Custom aliases
@@ -66,11 +73,13 @@ The module creates or updates this file with:
 - Terminal title display
 
 **Windows Terminal Config**
-```
+
+```text
 %LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
 ```
 
 Configures:
+
 - Default font: Fira Code
 - Font size: 10pt
 
@@ -119,7 +128,7 @@ Set-Alias -Name myalias -Value Get-SomeCommand -Force
 ### Keyboard Shortcuts Reference
 
 | Shortcut | Action |
-|---|---|
+| --- | --- |
 | Tab | Show completion menu |
 | Ctrl+R | Search command history (reverse) |
 | Ctrl+S | Search command history (forward) |
@@ -133,15 +142,18 @@ Set-Alias -Name myalias -Value Get-SomeCommand -Force
 ### Troubleshooting
 
 **Prompt not showing?**
+
 - Restart PowerShell
 - Run: `oh-my-posh --version`
 
 **Font not working?**
+
 - Install Windows Terminal
 - Restart Terminal
 - Font takes effect on next session
 
 **Autocomplete not working?**
+
 - Edit `$PROFILE`: `code $PROFILE`
 - Verify PSReadLine section exists
 - Reload profile: `. $PROFILE`
@@ -179,17 +191,20 @@ O módulo `shell` transforma o PowerShell em um terminal moderno e rico em recur
 ### Features Instaladas
 
 #### 1. Oh My Posh
+
 - Prompt moderno e customizável com temas (dracula, nord, powerlevel10k, etc)
 - Exibição de status do repositório Git
 - Indicadores de diretório e pistas visuais
 - Suporte a prompt de múltiplas linhas
 
 #### 2. Fonte Fira Code
+
 - Fonte monoespaçada moderna projetada para código
 - Suporte a ligaduras para operadores (==, =>, ->, etc)
 - Melhor legibilidade para programação
 
 #### 3. Aprimoramentos PSReadLine
+
 - **Busca em Histórico**: Ctrl+R para busca reversa, Ctrl+S para busca direta
 - **Conclusão com Tab**: Menu interativo (como bash)
 - **Previsão**: Mostra sugestões do histórico de comandos
@@ -200,23 +215,27 @@ O módulo `shell` transforma o PowerShell em um terminal moderno e rico em recur
   - Ctrl+RightArrow: Pular próxima palavra
 
 #### 4. Aliases Customizados (estilo bash)
+
 - `ll` - Listar arquivos em formato longo
 - `la` - Listar todos os arquivos incluindo ocultos
 - `grep` - Equivalente PowerShell do grep
 - `touch` - Criar arquivos vazios
 
 #### 5. Integração com Windows Terminal
+
 - Auto-configura Windows Terminal para usar Fira Code
 - Tamanho da fonte definido em 10pt (ajustável)
 
 ### O Que Gets Configurado
 
 **Perfil do PowerShell ($PROFILE)**
-```
+
+```text
 ~\Documents\PowerShell\profile.ps1
 ```
 
 O módulo cria ou atualiza este arquivo com:
+
 - Inicialização de Oh My Posh
 - Configuração de PSReadLine
 - Aliases customizados
@@ -224,11 +243,13 @@ O módulo cria ou atualiza este arquivo com:
 - Exibição de título do terminal
 
 **Configuração do Windows Terminal**
-```
+
+```text
 %LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
 ```
 
 Configura:
+
 - Fonte padrão: Fira Code
 - Tamanho da fonte: 10pt
 
@@ -277,7 +298,7 @@ Set-Alias -Name meuAlias -Value Get-AlgumComando -Force
 ### Referência de Atalhos de Teclado
 
 | Atalho | Ação |
-|---|---|
+| --- | --- |
 | Tab | Mostrar menu de conclusão |
 | Ctrl+R | Buscar histórico de comandos (reverso) |
 | Ctrl+S | Buscar histórico de comandos (direto) |
@@ -291,15 +312,18 @@ Set-Alias -Name meuAlias -Value Get-AlgumComando -Force
 ### Solução de Problemas
 
 **Prompt não aparece?**
+
 - Reinicie o PowerShell
 - Execute: `oh-my-posh --version`
 
 **Fonte não funcionando?**
+
 - Instale Windows Terminal
 - Reinicie o Terminal
 - A fonte entra em efeito na próxima sessão
 
 **Autocomplete não funcionando?**
+
 - Edite `$PROFILE`: `code $PROFILE`
 - Verifique se a seção PSReadLine existe
 - Recarregue o perfil: `. $PROFILE`

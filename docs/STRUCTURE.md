@@ -3,21 +3,24 @@
 ## File Organization by Responsibility
 
 ### Entry Points
+
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `setup.ps1` | Main automation script - orchestrates everything |
 | `tools/validate.ps1` | Validation utility for checking installations |
 
 ### Core Logic (`src/core/`)
+
 | File | Functions | Purpose |
-|------|-----------|---------|
+| ------ | ----------- | --------- |
 | `Installation.ps1` | `Install-Program()` | Install via Winget with fallback |
 | | `Install-FromUrl()` | Download and execute custom installer |
 | | `Apply-SystemConfig()` | Apply system configuration with error handling |
 
 ### Utilities (`src/utils/`)
+
 | File | Functions | Purpose |
-|------|-----------|---------|
+| ------ | ----------- | --------- |
 | `Logging.ps1` | `Write-Log()` | Timestamped colored log output |
 | | `Write-GroupHeader()` | Format group section headers |
 | | `Write-Section()` | Generic section headers |
@@ -35,8 +38,9 @@
 | | `Get-InstalledPrograms()` | List all installed packages |
 
 ### Installation Modules (`src/modules/`)
+
 | File | Functions | Purpose |
-|------|-----------|---------|
+| ------ | ----------- | --------- |
 | `base.ps1` | `Install-BasePrograms()` | Install essential programs |
 | | `Set-BaseConfiguration()` | Apply base system configuration |
 | `dev.ps1` | `Install-DevPrograms()` | Install development tools |
@@ -45,21 +49,23 @@
 | | `Set-GamingConfiguration()` | Apply gaming configuration |
 
 ### Documentation (`docs/`)
+
 | File | Content |
-|------|---------|
+| ------ | --------- |
 | `ARCHITECTURE.md` | Project design, dependencies, future enhancements |
 | `EXAMPLES.md` | How to add programs, configurations, troubleshooting |
 | `VALIDATION.md` | Installation validation methods, detection details |
 
 ### Configuration & Tools
+
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `config/` | (Reserved) Future configuration files |
 | `tests/` | (Reserved) Future test scripts |
 
 ## Loading Order (setup.ps1)
 
-```
+```text
 1. Logging.ps1       (needed by everything)
 2. System.ps1        (elevation checks)
 3. Validation.ps1    (installation detection)
@@ -70,7 +76,7 @@
 
 ## Function Dependencies
 
-```
+```text
 setup.ps1 (entry point)
   ├─ Logging.ps1
   │  └─ Write-Log()              ← Used everywhere
@@ -100,26 +106,34 @@ setup.ps1 (entry point)
 ## Responsibility Summary
 
 ### `src/core/` - What to do?
+
 **Installation and configuration application logic**
+
 - How to install programs
 - How to apply system configurations
 - Error handling and fallbacks
 
 ### `src/utils/` - How to do it?
+
 **Reusable utilities for common operations**
+
 - How to log output
 - How to detect installations
 - How to manipulate the registry
 - How to work with system privileges
 
 ### `src/modules/` - What to install?
+
 **Declaration of what to install and configure**
+
 - Which programs belong to each group
 - What configurations to apply
 - Uses core logic via `Install-Program()` and `Apply-SystemConfig()`
 
 ### `docs/` - Documentation
+
 **User and developer guides**
+
 - How the project is organized
 - How to add new programs
 - How validation works
@@ -127,19 +141,24 @@ setup.ps1 (entry point)
 ## Adding New Features
 
 ### Add a new installation group?
+
 → Create `src/modules/mygroup.ps1`
 
 ### Add a new utility function?
+
 → Add to appropriate file in `src/utils/`
+
 - Logging output? → `Logging.ps1`
 - System check? → `System.ps1`
 - Installation detection? → `Validation.ps1`
 - Registry manipulation? → `Registry.ps1`
 
 ### Add a new core installation method?
+
 → Modify `src/core/Installation.ps1`
 
 ### Add system configuration?
+
 → Add to `Set-{Group}Configuration()` in modules
 
 ## File Size Reference
@@ -160,7 +179,7 @@ Optimized for clarity and maintainability:
 ## Finding Specific Functions
 
 | Looking for... | File | Function |
-|---|---|---|
+| --- | --- | --- |
 | Log output | `src/utils/Logging.ps1` | `Write-Log()` |
 | Check if installed | `src/utils/Validation.ps1` | `Test-ProgramInstalled()` |
 | Change registry | `src/utils/Registry.ps1` | `Set-RegistryValue()` |

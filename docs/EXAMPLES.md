@@ -48,6 +48,7 @@ Add a `ChocoId` parameter for Chocolatey fallback:
 ```
 
 **Find Chocolatey IDs:**
+
 ```powershell
 # Search on https://community.chocolatey.org/packages
 # Or search command line (requires choco installed):
@@ -110,6 +111,7 @@ winget search "Program Name"
 ```
 
 Example:
+
 ```powershell
 PS> winget search "Visual Studio Code"
 Name             Id                           Version Source
@@ -148,6 +150,7 @@ When setting registry values, use one of these types:
 - `MultiString` - Multiple strings
 
 Example:
+
 ```powershell
 Set-RegistryValue -Path "HKCU:\Software\MyApp" `
     -Name "DebugMode" -Value 1 -Type DWord

@@ -31,6 +31,7 @@ Configure these settings for the `main` branch:
 - ✅ **Require branches to be up to date before merging**: Yes
 
 **Select status checks**:
+
 - `Lint` - PSScriptAnalyzer code quality
 - `Validate` - Project structure validation
 - `Security` - Security scanning
@@ -98,7 +99,7 @@ Rules:
 
 ### Setting Up via GitHub CLI
 
-Install GitHub CLI: https://cli.github.com
+Install GitHub CLI: <https://cli.github.com>
 
 #### Create Main Branch Protection
 
@@ -170,6 +171,7 @@ Set up these labels for PR organization:
 ### Protection Exemptions
 
 Consider exempting for:
+
 - **Dependabot** - Automatic dependency updates
 - **Release bot** - Automated releases
 
@@ -216,6 +218,7 @@ Configure essas opções para a branch `main`:
 - ✅ **Exigir que branches estejam atualizadas**: Sim
 
 **Selecione os checks**:
+
 - `Lint` - Qualidade de código PSScriptAnalyzer
 - `Validate` - Validação de estrutura do projeto
 - `Security` - Verificação de segurança

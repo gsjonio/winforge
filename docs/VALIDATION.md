@@ -9,6 +9,7 @@ The setup script includes comprehensive validation to prevent redundant installa
 The script uses **4 progressive detection methods** (checked in order):
 
 ### 1. Executable Command Check
+
 **Fastest** - Searches system PATH for the program's command
 
 ```powershell
@@ -19,6 +20,7 @@ Get-Command -Name "git"  # Returns path if found
 ✗ May miss: GUI-only applications without PATH entry
 
 ### 2. Windows Package Manager (Get-Package)
+
 **Windows Registry** - Checks installed packages via PackageManagement
 
 ```powershell
@@ -29,6 +31,7 @@ Get-Package -Name "*Git*"
 ✗ May miss: Portable/ZIP distributions, Winget-only packages
 
 ### 3. Winget List
+
 **Package Manager** - Queries Windows Package Manager directly
 
 ```powershell
@@ -39,9 +42,11 @@ winget list --id Git.Git --exact
 ✗ May miss: Older manual installations
 
 ### 4. Registry Uninstall Keys
+
 **Most Thorough** - Searches Windows uninstall registry paths
 
 Checks:
+
 - `HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall`
 - `HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall`
 - `HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall`
@@ -65,6 +70,7 @@ Test-ProgramInstalled -ProgramName "Git" `
 ```
 
 **Parameters:**
+
 - `ProgramName` (required) - Display name of program
 - `Executable` (optional) - Command to check in PATH
 - `WingetId` (optional) - Winget package identifier
@@ -97,10 +103,12 @@ Show-InstallationReport -Programs $programs -ShowDetails
 ```
 
 **Parameters:**
+
 - `Programs` (required) - Array of program objects
 - `ShowDetails` (optional switch) - Show detection details
 
 **Output:**
+
 ```text
 =======================================================================
   INSTALLATION VALIDATION REPORT
@@ -124,20 +132,21 @@ Show-InstallationReport -Programs $programs -ShowDetails
 
 ### When Program IS Detected
 
-```
+```text
 [~] Git is already installed
     ↓
 SKIPPED - No action taken
 ```
 
 The script logs the detection method and skips installation:
+
 - Saves time
 - Preserves existing configuration
 - Prevents version conflicts
 
 ### When Program IS NOT Detected
 
-```
+```text
 [i] Installing Git...
     ↓
     Try Winget
@@ -174,6 +183,7 @@ The script logs the detection method and skips installation:
 ```
 
 **Detection Flow:**
+
 1. Check executable → Not found
 2. Check Package → Not found
 3. Check Winget → Not found
@@ -198,6 +208,7 @@ The script logs the detection method and skips installation:
 ## Best Practices
 
 ### 1. Always Provide Executable
+
 Ensures fastest detection:
 
 ```powershell
@@ -209,6 +220,7 @@ Ensures fastest detection:
 ```
 
 ### 2. Provide Custom Installer URL
+
 Handles cases where Winget fails:
 
 ```powershell
@@ -221,6 +233,7 @@ Handles cases where Winget fails:
 ```
 
 ### 3. Test Before Running
+
 Validate programs before full setup:
 
 ```powershell
@@ -235,9 +248,10 @@ Show-InstallationReport -Programs $myPrograms -ShowDetails
 ```
 
 ### 4. Keep Logs
+
 The script logs all operations for troubleshooting:
 
-```
+```text
 [11:50:10] [i] Installing Git...
 [11:50:10] [~] Git is already installed
 [11:50:11] [+] Installation completed
@@ -248,17 +262,20 @@ The script logs all operations for troubleshooting:
 ### Program Not Detected
 
 1. **Verify executable name:**
+
    ```powershell
    Get-Command -Name "git"
    ```
 
 2. **Check registry manually:**
+
    ```powershell
    Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall" |
        Get-ItemProperty | Where DisplayName -Match "Git"
    ```
 
 3. **List via Winget:**
+
    ```powershell
    winget list --id Git.Git
    ```
@@ -266,11 +283,13 @@ The script logs all operations for troubleshooting:
 ### Installation Failed
 
 1. **Check Winget first:**
+
    ```powershell
    winget install --id Git.Git
    ```
 
 2. **Verify installer URL:**
+
    ```powershell
    Invoke-WebRequest -Uri "https://..." -Method Head
    ```

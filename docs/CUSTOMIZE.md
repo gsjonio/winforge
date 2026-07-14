@@ -21,31 +21,37 @@ The `customize` module applies 18+ Windows UI and shell customizations to match 
 ### Customizations Applied
 
 #### File Explorer
+
 - ✅ Show hidden files
 - ✅ Show file extensions
 - ✅ Show full path in address bar
 - ✅ Set default view to List
 
 #### Context Menu
+
 - ✅ Remove unnecessary "Share" option
 - ✅ Add "Edit with Notepad++" (if installed)
 - ✅ Customize file context menus
 
 #### Taskbar
+
 - ✅ Show all system tray icons (disable auto-hide)
 - ✅ Disable news and interests widget
 - ✅ Disable Cortana search icon
 
 #### Start Menu
+
 - ✅ Remove recommendations
 - ✅ Remove suggested apps
 
 #### Visual Settings
+
 - ✅ Remove shortcut arrow overlay
 - ✅ Enable dark mode for applications
 - ✅ Enable dark mode for Windows
 
 #### Input Devices
+
 - ✅ Disable sticky keys confirmation dialog
 - ✅ Enable mouse pointer shadow
 - ✅ Disable mouse acceleration
@@ -54,7 +60,8 @@ The `customize` module applies 18+ Windows UI and shell customizations to match 
 ### Registry Locations Modified
 
 **HKEY_CURRENT_USER (User Preferences)**
-```
+
+```text
 Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
 Software\Microsoft\Windows\CurrentVersion\Explorer\CabinetState
 Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons
@@ -73,6 +80,7 @@ Control Panel\Mouse
 ### Reversibility
 
 All customizations use standard Windows Registry keys and can be reversed by:
+
 1. Manually restoring registry values via regedit
 2. Resetting Windows Settings (Settings → System → About → Reset this PC)
 3. Reinstalling Windows
@@ -127,31 +135,37 @@ O módulo `customize` aplica 18+ customizações de UI e shell do Windows para c
 ### Customizações Aplicadas
 
 #### Explorador de Arquivos
+
 - ✅ Mostrar arquivos ocultos
 - ✅ Mostrar extensões de arquivo
 - ✅ Mostrar caminho completo na barra de endereço
 - ✅ Definir visualização padrão como Lista
 
 #### Menu de Contexto
+
 - ✅ Remover opção desnecessária "Compartilhar"
 - ✅ Adicionar "Editar com Notepad++" (se instalado)
 - ✅ Customizar menus de contexto de arquivo
 
 #### Barra de Tarefas
+
 - ✅ Mostrar todos os ícones da bandeja do sistema
 - ✅ Desabilitar widget de notícias e interesses
 - ✅ Desabilitar ícone de busca Cortana
 
 #### Menu Iniciar
+
 - ✅ Remover recomendações
 - ✅ Remover aplicativos sugeridos
 
 #### Configurações Visuais
+
 - ✅ Remover sobreposição de seta de atalho
 - ✅ Ativar modo escuro para aplicações
 - ✅ Ativar modo escuro para Windows
 
 #### Dispositivos de Entrada
+
 - ✅ Desabilitar diálogo de confirmação de sticky keys
 - ✅ Ativar sombra do ponteiro do mouse
 - ✅ Desabilitar aceleração do mouse
@@ -160,6 +174,7 @@ O módulo `customize` aplica 18+ customizações de UI e shell do Windows para c
 ### Reversibilidade
 
 Todas as customizações usam chaves padrão do Registro do Windows e podem ser revertidas:
+
 1. Manualmente restaurando valores via regedit
 2. Resetando Configurações do Windows
 3. Reinstalando Windows

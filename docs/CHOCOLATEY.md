@@ -8,7 +8,7 @@ Chocolatey (choco) is integrated as a **fallback installer** when Winget fails. 
 
 The script attempts installation in this order:
 
-```
+```text
 1. Winget (primary)
    ↓ (if fails)
 2. Chocolatey (fallback)
@@ -32,6 +32,7 @@ Chocolatey installs automatically when needed:
 ```
 
 If Winget fails, the script will:
+
 1. Detect Chocolatey is not installed
 2. Install Chocolatey automatically
 3. Use Chocolatey to install the program
@@ -60,7 +61,7 @@ Then use it in your programs:
 
 ### Search Online
 
-Visit: https://community.chocolatey.org/packages
+Visit: <https://community.chocolatey.org/packages>
 
 Example: Search for "python"
 
@@ -135,7 +136,7 @@ Result: Winget fails → Chocolatey succeeds
 Important distinction:
 
 | Field | Value | Source |
-|-------|-------|--------|
+| ------- | ------- | -------- |
 | `Name` | "Visual Studio Code" | Display name (human readable) |
 | `WingetId` | "Microsoft.VisualStudioCode" | Winget package ID |
 | `ChocoId` | "vscode" | Chocolatey package ID |
@@ -154,7 +155,7 @@ Example:
 ## Common Chocolatey Package IDs
 
 | Program | ID |
-|---------|-----|
+| --------- | ----- |
 | Python | `python311` |
 | Node.js | `nodejs` |
 | Git | `git` |
@@ -170,13 +171,14 @@ Example:
 
 ### Chocolatey installation fails
 
-```
+```text
 [x] Chocolatey installation failed
 ```
 
 **Cause**: Network issue or missing admin rights
 
 **Solution**:
+
 1. Ensure you have admin privileges
 2. Check internet connection
 3. Try manual installation first
@@ -184,26 +186,28 @@ Example:
 
 ### Program not found in Chocolatey
 
-```
+```text
 [x] Program installation failed (no valid method)
 ```
 
 **Cause**: Program not available in any source
 
 **Solution**:
+
 1. Provide `InstallerUrl` as fallback
 2. Check if Winget ID is correct
-3. Search Chocolatey: https://community.chocolatey.org/packages
+3. Search Chocolatey: <https://community.chocolatey.org/packages>
 
 ### Chocolatey command not found
 
-```
+```text
 choco : The term 'choco' is not recognized
 ```
 
 **Cause**: Chocolatey not installed or PATH not updated
 
 **Solution**:
+
 - The script handles this automatically
 - Or install manually and restart PowerShell
 
@@ -258,15 +262,15 @@ For scripts with many Chocolatey packages, consider pre-installing Chocolatey.
 
 Chocolatey installation downloads from official source:
 
-```
+```text
 https://community.chocolatey.org/install.ps1
 ```
 
 ## References
 
-- **Chocolatey Official**: https://chocolatey.org
-- **Package Repository**: https://community.chocolatey.org/packages
-- **Documentation**: https://docs.chocolatey.org
+- **Chocolatey Official**: <https://chocolatey.org>
+- **Package Repository**: <https://community.chocolatey.org/packages>
+- **Documentation**: <https://docs.chocolatey.org>
 
 ---
 

@@ -22,6 +22,7 @@ This project uses **5 GitHub Actions workflows** for:
 **Trigger**: Commits or PRs that modify PowerShell files
 
 **What it does**:
+
 - Installs PSScriptAnalyzer
 - Runs linting against all `.ps1` files
 - Reports errors (fails if found)
@@ -30,6 +31,7 @@ This project uses **5 GitHub Actions workflows** for:
 **Status**: ✅ Enabled
 
 **Command to run locally**:
+
 ```powershell
 .\tools\lint.ps1
 ```
@@ -43,6 +45,7 @@ This project uses **5 GitHub Actions workflows** for:
 **Trigger**: Every push and weekly schedule
 
 **Checks**:
+
 - ✓ All required files exist
 - ✓ Project structure is correct
 - ✓ CHANGELOG format is valid
@@ -60,6 +63,7 @@ This project uses **5 GitHub Actions workflows** for:
 **Trigger**: When a version tag is pushed (v*.*.*)
 
 **What it does**:
+
 1. Extracts version from tag
 2. Reads CHANGELOG for release notes
 3. Creates GitHub Release
@@ -69,6 +73,7 @@ This project uses **5 GitHub Actions workflows** for:
 **Status**: ✅ Enabled
 
 **How to trigger**:
+
 ```bash
 git tag -a v0.2.0 -m "Release 0.2.0"
 git push origin v0.2.0
@@ -83,6 +88,7 @@ git push origin v0.2.0
 **Trigger**: Changes to markdown or docs
 
 **Checks**:
+
 - ✓ Markdown syntax validation
 - ✓ Broken link detection
 - ✓ README.md completeness
@@ -99,6 +105,7 @@ git push origin v0.2.0
 **Trigger**: PowerShell changes + weekly schedule
 
 **Checks**:
+
 - ✓ PowerShell security rules (PSScriptAnalyzer)
 - ✓ Dangerous patterns detection
 - ✓ External dependency scanning
@@ -108,6 +115,7 @@ git push origin v0.2.0
 **Status**: ✅ Enabled
 
 **Security rules checked**:
+
 - PSAvoidUsingPlainTextForPassword
 - PSAvoidUsingConvertToSecureStringWithPlainText
 - PSAvoidUsingUsernameAndPasswordParams
@@ -121,6 +129,7 @@ git push origin v0.2.0
 **Trigger**: PR opened, updated, or reopened
 
 **Checks**:
+
 - ✓ PR title follows conventional commit format
 - ✓ PR has description
 - ✓ PR links to issues
@@ -133,7 +142,7 @@ git push origin v0.2.0
 
 **PR Requirements**:
 
-```
+```text
 Title format: type(scope): description
 
 Allowed types:
@@ -162,7 +171,7 @@ Add to README.md:
 ## Workflow Triggers
 
 | Workflow | Push | PR | Schedule |
-|----------|------|-----|----------|
+| ---------- | ------ | ----- | ---------- |
 | Lint | ✓ | ✓ | - |
 | Validate | ✓ | - | Weekly |
 | Release | Tag (v*) | - | - |
@@ -225,6 +234,7 @@ Go to **Actions** → Select workflow → **Run workflow** button
 **Workflow fails but should pass?**
 
 Check:
+
 1. Branch configuration (push to main/develop)
 2. File changes match trigger conditions
 3. Dependencies installed correctly

@@ -2,7 +2,7 @@
 
 ## Directory Structure
 
-```
+```text
 win-setup/
 ├── setup.ps1                    # Main entry point
 ├── validate.ps1                 # Validation utility
@@ -42,12 +42,14 @@ win-setup/
 ## Responsibility Breakdown
 
 ### `setup.ps1` (Main Entry Point)
+
 - Orchestrates the entire setup process
 - Handles command-line arguments (-Group, -SkipElevation)
 - Loads and executes installation modules
 - Manages elevation/UAC prompts
 
 ### `src/core/`
+
 **Core business logic for installation and configuration**
 
 - **Installation.ps1**
@@ -56,6 +58,7 @@ win-setup/
   - `Apply-SystemConfig()` - Apply system configurations with error handling
 
 ### `src/utils/`
+
 **Reusable utilities and helpers**
 
 - **Logging.ps1** - Output formatting
@@ -81,18 +84,22 @@ win-setup/
   - `Set-FileAssociation()` - Configure file type associations
 
 ### `src/modules/`
+
 **Installation groups (PowerShell Modules)**
 
 Each group contains:
+
 - `Install-{Group}Programs()` - List and install programs
 - `Set-{Group}Configuration()` - Apply group-specific configurations
 
 Supported groups:
+
 - **base.psm1** - Always executed; essential programs
 - **dev.psm1** - Development tools and IDEs
 - **gaming.psm1** - Gaming programs and configs
 
 ### `docs/`
+
 **User-facing documentation**
 
 - **ARCHITECTURE.md** - This file; explains project structure
@@ -115,7 +122,7 @@ When `setup.ps1` executes with `-Group base`:
 
 ## Function Dependencies
 
-```
+```text
 setup.ps1
   ├─ Logging.ps1 (required first)
   ├─ System.ps1 (elevation, privileges)
@@ -148,6 +155,7 @@ setup.ps1
    - Registry? → `Registry.ps1`
 
 2. Import in dependent files:
+
    ```powershell
    . "$libPath\utils\Logging.ps1"
    ```
@@ -156,6 +164,7 @@ setup.ps1
 
 1. Edit appropriate module in `src/modules/`
 2. Use `Apply-SystemConfig` in `Set-{Group}Configuration()`:
+
    ```powershell
    Apply-SystemConfig "Enable Dark Mode" {
        Set-RegistryValue -Path "HKCU:\Software\..." -Name "..." -Value 0 -Type DWord
@@ -178,6 +187,7 @@ setup.ps1
 - **Total**: 5-10 minutes for ~50 programs (varies by system)
 
 Optimize by:
+
 - Providing executable name for faster detection
 - Using Winget IDs when available
 - Grouping related programs
