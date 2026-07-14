@@ -28,6 +28,7 @@
 | | `Get-InstallationStatus()` | Detailed status with detection method |
 | | `Show-InstallationReport()` | Visual report for multiple programs |
 | `Registry.ps1` | `Set-RegistryValue()` | Set registry entries (creates paths) |
+| | `Remove-RegistryValue()` | Remove a value (fall back to Windows default) |
 | | `Get-RegistryValue()` | Read registry entries |
 | | `Enable-Feature()` | Enable Windows optional feature |
 | | `Disable-Feature()` | Disable Windows optional feature |
@@ -47,6 +48,10 @@
 | | `Set-DevConfiguration()` | Apply development configuration |
 | `gaming.ps1` | `Install-GamingPrograms()` | Install gaming programs |
 | | `Set-GamingConfiguration()` | Apply gaming configuration |
+| `optimize.ps1` | `Get-OptimizeTweaks()` | Pure selector: tweak table filtered by `-Profile` |
+| | `Set-OptimizeConfiguration()` | Apply optimize tweaks for a profile |
+| `restore.ps1` | `Restore-SafeDefaults()` | Reverse optimize's changes to Windows defaults |
+| | `Set-RestoreConfiguration()` | Entry point for `-Group restore` (supports `-WhatIf`) |
 
 ### Documentation (`docs/`)
 

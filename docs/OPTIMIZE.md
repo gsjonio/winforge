@@ -6,122 +6,126 @@
 
 ### Overview
 
-The `optimize` module applies system optimizations and privacy tweaks via Windows Registry settings and service configuration. It is **safe by default**: a `-Profile` (safe / desktop / gaming, cumulative) controls how aggressive it is. The `safe` profile never disables VSS/System Restore, StorSvc (Microsoft Store), SmartScreen, DPS or WinRM — the destructive tweaks were removed or made opt-in after breaking a real machine.
+The `optimize` group ([src/modules/optimize.ps1](../src/modules/optimize.ps1))
+applies privacy, performance and service tweaks. It is **safe by default**: the
+tweaks are a data-driven table, each tagged with a risk tier, and a `-Profile`
+selects how far it goes. Tiers are cumulative — `safe ⊂ desktop ⊂ gaming`.
 
-### Usage
+This page explains what each tweak does, why, and its trade-off. For the service
+details see [SERVICES.md](SERVICES.md); to undo anything see [RESTORE.md](RESTORE.md).
+
+### Running it
 
 ```powershell
-# Safe defaults (privacy, visual, storage, harmless services)
-.\setup.ps1 -Group optimize
-
-# Add power / 24-7 tweaks
-.\setup.ps1 -Group optimize -Profile desktop
-
-# Everything, incl. network + aggressive service disables (SysMain, DPS, WinRM)
-.\setup.ps1 -Group optimize -Profile gaming
+.\setup.ps1 -Group optimize                  # safe (default)
+.\setup.ps1 -Group optimize -Profile desktop # + power / 24-7 tweaks
+.\setup.ps1 -Group optimize -Profile gaming  # + network + aggressive services
 ```
 
-### Optimizations Applied
+### Prominent safety call-outs
 
-#### Telemetry & Data Collection
+These changes broke a real machine and are **no longer applied** — read this
+before assuming an older run left your system in a good state:
 
-- ✅ Disable diagnostic data collection (AllowDiagnosticData = 0)
-- ✅ Disable DiagTrack service
-- ✅ Disable consumer experiences tracking
+- **VSS / System Restore was disabled** (removed, issue #8). Disabling `VSS` set
+  `DisableShadowCopy=1` and stopped the service, removing System Restore and any
+  VSS-based backup — i.e. no rollback if another tweak breaks something.
+- **StorSvc was disabled** (removed, issue #9). It is a runtime dependency of the
+  Microsoft Store; disabling it breaks Store downloads/updates.
+- **SmartScreen was disabled** (removed, issue #11). Turning off `SmartScreenEnabled`
+  and `EnableWebContentEvaluation` is a security regression on a machine that
+  downloads binaries.
+- **The non-Store install lockdown is now opt-in.** `EnableAppsInstallationFromNonStoreLocation=0`
+  ([optimize.ps1:237](../src/modules/optimize.ps1#L237)) **blocks sideloading /
+  installs from non-Store locations** — it is not a "push installation" toggle,
+  despite what the old comment said. It now runs only under `-Profile gaming`.
 
-#### Background Activities
+If an older winforge version applied these, run `.\setup.ps1 -Group restore` to
+put them back.
 
-- ✅ Disable background application activity
-- ✅ Disable tailored experiences and suggestions
-- ✅ Disable automatic driver installation
-- ✅ Disable Multimedia Class Scheduler (if RAM ≥ 8GB)
+### Safe profile — privacy & telemetry
 
-#### Microsoft Services
+Registry preferences that reduce data collection and background noise. All are
+low-risk; the HKLM policy entries need removal (not a Settings toggle) to revert.
 
-- ✅ Disable Find My Device feature
-- ✅ Disable Activity History sync
-- ✅ Disable settings synchronization (Accessibility, Apps, Personalization, StartLayout)
-- ✅ Disable Cortana assistance
+| Tweak | Key / value | Effect | Risk / trade-off |
+| --- | --- | --- | --- |
+| Diagnostic data | `...\DataCollection\AllowDiagnosticData=0` | Minimizes telemetry | Feedback Hub / some diagnostics inert |
+| Background activity | `...\BackgroundAccessApplications`, `AllowTailoredExperiences=0` | Fewer background apps / tailored tips | Low |
+| Find My Device | `...\FindMyDevice\LocationSyncEnabled=0` | Turns off device location sync | Can't locate a lost device |
+| Activity history | `EnableActivityFeed=0` (policy + HKCU) | Disables Timeline sync | Low |
+| Problem Steps Recorder | `...\AppCompat\DisablePCA=1` | Disables PSR | Low |
+| Update toasts | `...UpdateNotification\Enabled=0` | Fewer update notifications | Low |
+| Quick Access insights | `...\Explorer\DisableQuickAccess=1` | Hides recent/frequent in Explorer | Quick Access unavailable |
+| Recent docs | `ShowRecent=0`, `ShowFrequent=0` | No recent-docs history | Low |
+| Settings sync | `SettingSync\SyncPolicy=0` (+ groups) | No cross-device settings sync | Low |
+| Cortana | `AllowCortana=0` (policy) | Disables Cortana | Low |
+| Consumer experiences | `CloudContent\DisableWindowsSpotlightFeatures=1` | No suggested apps / Spotlight | Low |
+| Driver metadata | `...\Device Metadata\PreventDeviceMetadataFromNetwork=1` | Blocks driver-metadata fetch | Generic device names/icons |
 
-#### Installation & Updates
+### Safe profile — visual performance
 
-- ✅ Disable App Installer (Push Installation service)
-- ✅ Disable automatic update notifications
-- ✅ Disable Windows Update automatic downloads
+`UserPreferencesMask`, `TaskbarAnimations=0`, `EnableTransparency=0`,
+`MenuShowDelay=0` and related keys turn off animations, transparency/blur and
+tooltip delay for snappier UI. **Purely cosmetic and fully reversible** via
+Settings → System → About → Advanced system settings → Performance.
 
-#### User Experience
+### Safe profile — storage
 
-- ✅ Disable Problem Steps Recorder (PSR)
-- ✅ Disable File Explorer quick access insights
-- ✅ Disable recent documents history in Start menu
-- ✅ Disable web content evaluation in Microsoft Edge
+Enables Storage Sense (automatic temp cleanup, recycle bin ≥ 30 days) and SSD
+TRIM (`fsutil behavior set DisableDeleteNotify 0`). Low risk; Storage Sense only
+cleans temp files and the recycle bin, not your documents. VSS/System Restore is
+**left intact**.
 
-#### Security Features
+### Safe profile — services
 
-- ✅ Configure privacy policies
-- SmartScreen is **not** disabled — turning it off is a security regression (removed, issue #11)
-- Non-Store install lockdown is **opt-in** (gaming profile only), never in the safe default
+Eleven low-impact services are set to `Disabled`. See the full table with factory
+defaults and per-service risk in [SERVICES.md](SERVICES.md). A few
+(`TabletInputService`, `stisvc`, `OneSyncSvc`) have feature side effects worth
+checking there before running.
 
-### Registry Locations Modified
+### Desktop profile — power / 24-7
 
-**HKEY_CURRENT_USER (User Settings)**
+Adds tweaks for a desktop that stays on: High Performance power plan, USB
+Selective Suspend off, sleep/hibernation off (`powercfg /h off`), Fast Startup
+off, and memory compression off (`Disable-MMAgent`, RAM ≥ 8 GB). Trade-off: higher
+idle power draw and no sleep; disabling hibernation removes `hiberfil.sys` and
+Fast Startup. All reversible via power settings.
 
-```text
-Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack
-Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications
-Software\Microsoft\Windows\CurrentVersion\Settings\Privacy\General
-Software\Microsoft\Windows\CurrentVersion\FindMyDevice
-Software\Microsoft\Windows\CurrentVersion\ActivityHistory
-Software\Microsoft\Windows\CurrentVersion\SettingSync\Groups\*
-Software\Microsoft\Personalization\Settings
-Software\Microsoft\Windows\CurrentVersion\AppHost
-Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
-```
+### Gaming profile — network & aggressive services
 
-**HKEY_LOCAL_MACHINE (System Settings)**
+- **QoS** `NonBestEffortLimit=0` — removes the reserved bandwidth ([optimize.ps1:206](../src/modules/optimize.ps1#L206)).
+- **Network throttling** `NetworkThrottlingIndex=0xFFFFFFFF` ([optimize.ps1:214](../src/modules/optimize.ps1#L214)) — now written safely as `-1` with read-back. **Known limitation:** it is written under `...\Services\Psched\Parameters`, but the documented location is `...\Multimedia\SystemProfile`, so it may have no effect (tracked separately).
+- **SysMain, DPS, WinRM** disabled — see [SERVICES.md](SERVICES.md). These affect prefetch, diagnostics and remote management, hence gaming-only.
 
-```text
-SOFTWARE\Policies\Microsoft\Windows\DataCollection
-SOFTWARE\Policies\Microsoft\Windows\AppInstaller
-SOFTWARE\Policies\Microsoft\Windows\System
-SOFTWARE\Policies\Microsoft\Windows\Explorer
-SOFTWARE\Policies\Microsoft\Windows\CloudContent
-SOFTWARE\Policies\Microsoft\Windows\Device Metadata
-SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer
-```
+### Gaming profile — non-Store install lockdown
+
+`EnableAppsInstallationFromNonStoreLocation=0` blocks installing apps from
+non-Store locations (sideloading). Opt-in only — it would otherwise block
+legitimate developer workflows.
 
 ### Reversibility
 
-All optimizations use standard Windows Registry keys and can be reversed by:
+The README once claimed optimizations are "all reversible via Windows settings."
+That is **not accurate** for every tweak:
 
-1. Manually restoring registry values via regedit
-2. Using Group Policy Editor (gpedit.msc) to revert settings
-3. Reinstalling Windows (clean slate)
+| Category | How to revert |
+| --- | --- |
+| Visual, most HKCU privacy prefs | Windows Settings |
+| Power / sleep / Fast Startup | Power settings (`powercfg`) |
+| Service disables | `services.msc`, or `restore` |
+| **HKLM policy keys** (DataCollection, CloudContent, Explorer, AppInstaller, Device Metadata, Windows Search) | **Not undone by Settings** — the value must be removed (via `restore` or `gpedit.msc`) |
+
+The reliable way to revert everything is `.\setup.ps1 -Group restore`
+(see [RESTORE.md](RESTORE.md)).
 
 ### Prerequisites
 
-- Windows 10 or 11
-- Administrator privileges
-- PowerShell 7+
+- Windows 10 or 11, administrator privileges, PowerShell 7+.
 
-### Safe to Run Multiple Times
+### Safe to run multiple times
 
-Yes - the script checks current values and applies settings idempotently.
-
-### Verification
-
-To verify optimizations were applied:
-
-```powershell
-# Check registry values
-Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack'
-Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection'
-
-# Or manually via regedit:
-# 1. Press Win+R, type: regedit
-# 2. Navigate to paths listed above
-# 3. Verify DWORD values are set correctly
-```
+Yes — `Set-RegistryValue` is idempotent and every tweak re-applies cleanly.
 
 ---
 
@@ -129,85 +133,126 @@ Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection
 
 ### Visão Geral
 
-O módulo `optimize` aplica otimizações de sistema e ajustes de privacidade via Registro do Windows e configuração de serviços. É **seguro por padrão**: um `-Profile` (safe / desktop / gaming, cumulativo) controla o quão agressivo ele é. O perfil `safe` nunca desabilita VSS/Restauração do Sistema, StorSvc (Microsoft Store), SmartScreen, DPS ou WinRM — os tweaks destrutivos foram removidos ou tornados opt-in depois de quebrarem uma máquina real.
+O grupo `optimize` ([src/modules/optimize.ps1](../src/modules/optimize.ps1))
+aplica ajustes de privacidade, desempenho e serviços. É **seguro por padrão**: os
+tweaks são uma tabela orientada a dados, cada um com um nível de risco, e um
+`-Profile` decide até onde ele vai. Os níveis são cumulativos —
+`safe ⊂ desktop ⊂ gaming`.
 
-### Uso
+Esta página explica o que cada tweak faz, por quê, e o trade-off. Para detalhes
+dos serviços veja [SERVICES.md](SERVICES.md); para desfazer, [RESTORE.md](RESTORE.md).
+
+### Como executar
 
 ```powershell
-# Padrão seguro (privacidade, visual, armazenamento, serviços inofensivos)
-.\setup.ps1 -Group optimize
-
-# Adiciona tweaks de energia / 24-7
-.\setup.ps1 -Group optimize -Profile desktop
-
-# Tudo, incl. rede + desabilitação agressiva de serviços (SysMain, DPS, WinRM)
-.\setup.ps1 -Group optimize -Profile gaming
+.\setup.ps1 -Group optimize                  # safe (padrão)
+.\setup.ps1 -Group optimize -Profile desktop # + tweaks de energia / 24-7
+.\setup.ps1 -Group optimize -Profile gaming  # + rede + serviços agressivos
 ```
 
-### Otimizações Aplicadas
+### Avisos de segurança em destaque
 
-#### Telemetria & Coleta de Dados
+Estas mudanças quebraram uma máquina real e **não são mais aplicadas** — leia
+antes de supor que uma execução antiga deixou seu sistema em bom estado:
 
-- ✅ Desabilitar coleta de dados de diagnóstico
-- ✅ Desabilitar serviço DiagTrack
-- ✅ Desabilitar rastreamento de experiências de consumidor
+- **VSS / Restauração do Sistema era desabilitado** (removido, issue #8). Isso
+  definia `DisableShadowCopy=1` e parava o serviço, removendo a Restauração do
+  Sistema e backups via VSS — ou seja, sem rollback se outro tweak quebrasse algo.
+- **StorSvc era desabilitado** (removido, issue #9). É dependência de runtime da
+  Microsoft Store; desabilitar quebra downloads/atualizações da Store.
+- **SmartScreen era desabilitado** (removido, issue #11). Desligar
+  `SmartScreenEnabled` e `EnableWebContentEvaluation` é uma regressão de segurança
+  numa máquina que baixa binários.
+- **O bloqueio de instalação fora da Store agora é opt-in.**
+  `EnableAppsInstallationFromNonStoreLocation=0`
+  ([optimize.ps1:237](../src/modules/optimize.ps1#L237)) **bloqueia sideload /
+  instalações fora da Store** — não é um botão de "push installation", apesar do
+  comentário antigo. Agora roda apenas sob `-Profile gaming`.
 
-#### Atividades em Background
+Se uma versão antiga aplicou isso, rode `.\setup.ps1 -Group restore` para reverter.
 
-- ✅ Desabilitar atividade de aplicativos em segundo plano
-- ✅ Desabilitar experiências e sugestões personalizadas
-- ✅ Desabilitar instalação automática de drivers
-- ✅ Desabilitar Multimedia Class Scheduler (se RAM ≥ 8GB)
+### Perfil safe — privacidade & telemetria
 
-#### Serviços Microsoft
+Preferências de registro que reduzem coleta de dados e ruído em segundo plano.
+Todas de baixo risco; as entradas de política HKLM precisam ser removidas (não é
+um botão em Configurações) para reverter.
 
-- ✅ Desabilitar recurso Localizar Meu Dispositivo
-- ✅ Desabilitar sincronização do Histórico de Atividades
-- ✅ Desabilitar sincronização de configurações
-- ✅ Desabilitar Cortana
+| Tweak | Chave / valor | Efeito | Risco / trade-off |
+| --- | --- | --- | --- |
+| Dados de diagnóstico | `...\DataCollection\AllowDiagnosticData=0` | Minimiza telemetria | Feedback Hub / diagnósticos inertes |
+| Atividade em background | `...\BackgroundAccessApplications`, `AllowTailoredExperiences=0` | Menos apps / dicas personalizadas | Baixo |
+| Localizar Dispositivo | `...\FindMyDevice\LocationSyncEnabled=0` | Desliga sync de localização | Não localiza dispositivo perdido |
+| Histórico de atividades | `EnableActivityFeed=0` (política + HKCU) | Desabilita Timeline | Baixo |
+| Gravador de Passos | `...\AppCompat\DisablePCA=1` | Desabilita PSR | Baixo |
+| Avisos de atualização | `...UpdateNotification\Enabled=0` | Menos notificações | Baixo |
+| Insights do Explorer | `...\Explorer\DisableQuickAccess=1` | Oculta recentes/frequentes | Quick Access indisponível |
+| Docs recentes | `ShowRecent=0`, `ShowFrequent=0` | Sem histórico de recentes | Baixo |
+| Sync de configurações | `SettingSync\SyncPolicy=0` (+ grupos) | Sem sync entre dispositivos | Baixo |
+| Cortana | `AllowCortana=0` (política) | Desabilita Cortana | Baixo |
+| Experiências de consumidor | `CloudContent\DisableWindowsSpotlightFeatures=1` | Sem apps sugeridos / Spotlight | Baixo |
+| Metadados de driver | `...\Device Metadata\PreventDeviceMetadataFromNetwork=1` | Bloqueia busca de metadados | Nomes/ícones genéricos |
 
-#### Instalação & Atualizações
+### Perfil safe — desempenho visual
 
-- ✅ Desabilitar serviço de Push Installation
-- ✅ Desabilitar notificações de atualização automática
-- ✅ Desabilitar downloads automáticos do Windows Update
+`UserPreferencesMask`, `TaskbarAnimations=0`, `EnableTransparency=0`,
+`MenuShowDelay=0` e chaves relacionadas desligam animações, transparência/blur e
+o atraso de tooltip para uma UI mais responsiva. **Puramente cosmético e
+totalmente reversível** em Configurações → Sistema → Sobre → Configurações
+avançadas → Desempenho.
 
-#### Experiência do Usuário
+### Perfil safe — armazenamento
 
-- ✅ Desabilitar Gravador de Passos (PSR)
-- ✅ Desabilitar insights de acesso rápido no Explorador
-- ✅ Desabilitar histórico de documentos recentes no menu Iniciar
-- ✅ Desabilitar avaliação de conteúdo web no Microsoft Edge
+Ativa o Sensor de Armazenamento (limpeza automática de temporários, lixeira ≥ 30
+dias) e o TRIM de SSD (`fsutil behavior set DisableDeleteNotify 0`). Baixo risco;
+o Sensor só limpa temporários e a lixeira, não seus documentos. VSS/Restauração do
+Sistema é **mantido intacto**.
 
-#### Recursos de Segurança
+### Perfil safe — serviços
 
-- ✅ Configurar políticas de privacidade
-- SmartScreen **não** é desabilitado — desligá-lo é uma regressão de segurança (removido, issue #11)
-- Bloqueio de instalação fora da Store é **opt-in** (apenas perfil gaming), nunca no padrão safe
+Onze serviços de baixo impacto vão para `Disabled`. Veja a tabela completa com
+padrões de fábrica e risco por serviço em [SERVICES.md](SERVICES.md). Alguns
+(`TabletInputService`, `stisvc`, `OneSyncSvc`) têm efeitos colaterais que vale
+conferir lá antes de rodar.
+
+### Perfil desktop — energia / 24-7
+
+Adiciona tweaks para um desktop que fica ligado: plano Alto Desempenho, USB
+Selective Suspend desligado, suspensão/hibernação desligadas (`powercfg /h off`),
+Fast Startup desligado e compressão de memória desligada (`Disable-MMAgent`, RAM ≥
+8 GB). Trade-off: maior consumo em repouso e sem suspensão; desabilitar
+hibernação remove `hiberfil.sys` e o Fast Startup. Tudo reversível nas
+configurações de energia.
+
+### Perfil gaming — rede & serviços agressivos
+
+- **QoS** `NonBestEffortLimit=0` — remove a banda reservada ([optimize.ps1:206](../src/modules/optimize.ps1#L206)).
+- **Network throttling** `NetworkThrottlingIndex=0xFFFFFFFF` ([optimize.ps1:214](../src/modules/optimize.ps1#L214)) — agora gravado com segurança como `-1` com releitura. **Limitação conhecida:** é gravado em `...\Services\Psched\Parameters`, mas o local documentado é `...\Multimedia\SystemProfile`, então pode não ter efeito (rastreado à parte).
+- **SysMain, DPS, WinRM** desabilitados — veja [SERVICES.md](SERVICES.md). Afetam prefetch, diagnóstico e gestão remota, por isso só no gaming.
+
+### Perfil gaming — bloqueio de instalação fora da Store
+
+`EnableAppsInstallationFromNonStoreLocation=0` bloqueia instalar apps fora da
+Store (sideload). Apenas opt-in — senão bloquearia fluxos legítimos de dev.
 
 ### Reversibilidade
 
-Todas as otimizações usam chaves padrão do Registro do Windows e podem ser revertidas:
+O README já afirmou que as otimizações são "todas reversíveis pelas configurações
+do Windows". Isso **não é preciso** para todo tweak:
 
-1. Manualmente restaurando valores via regedit
-2. Usando o Editor de Política de Grupo (gpedit.msc)
-3. Reinstalando Windows
+| Categoria | Como reverter |
+| --- | --- |
+| Visual, maioria das prefs HKCU de privacidade | Configurações do Windows |
+| Energia / suspensão / Fast Startup | Configurações de energia (`powercfg`) |
+| Desabilitação de serviços | `services.msc`, ou `restore` |
+| **Chaves de política HKLM** (DataCollection, CloudContent, Explorer, AppInstaller, Device Metadata, Windows Search) | **Não desfeitas por Configurações** — o valor precisa ser removido (via `restore` ou `gpedit.msc`) |
 
-### Verificação
+A forma confiável de reverter tudo é `.\setup.ps1 -Group restore`
+(veja [RESTORE.md](RESTORE.md)).
 
-Para verificar se as otimizações foram aplicadas:
+### Pré-requisitos
 
-```powershell
-# Verificar valores do registro
-Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack'
-Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection'
-
-# Ou manualmente via regedit:
-# 1. Pressione Win+R, digite: regedit
-# 2. Navegue para os caminhos listados acima
-# 3. Verifique que os valores DWORD estão configurados corretamente
-```
+- Windows 10 ou 11, privilégios de administrador, PowerShell 7+.
 
 ### Seguro Executar Múltiplas Vezes
 
-Sim - o script verifica valores atuais e aplica configurações de forma idempotente.
+Sim — `Set-RegistryValue` é idempotente e cada tweak reaplica de forma limpa.

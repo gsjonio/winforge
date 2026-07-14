@@ -348,16 +348,25 @@ Change themes: Edit `$env:APPDATA\oh-my-posh\config.json`. 100+ themes at
 
 ## Documentation
 
-Full guides for each component:
+Two layers: the **[Wiki](https://github.com/gsjonio/winforge/wiki)** is the
+narrative/onboarding layer; **`docs/`** is the reference layer.
 
-- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** — Project structure & design
-- **[ADMIN-PRIVILEGES.md](docs/ADMIN-PRIVILEGES.md)** — 4 ways to elevate
-- **[SHELL.md](docs/SHELL.md)** — Oh My Posh & Fira Code setup
-- **[OPTIMIZE.md](docs/OPTIMIZE.md)** — 42 tweaks explained + how to undo
+- **[OPTIMIZE.md](docs/OPTIMIZE.md)** — every tweak explained (effect, risk, reversibility)
+- **[SERVICES.md](docs/SERVICES.md)** — every service touched + factory defaults
+- **[RESTORE.md](docs/RESTORE.md)** — reverse winforge's changes (`-Group restore`)
 - **[CUSTOMIZE.md](docs/CUSTOMIZE.md)** — UI changes explained
-- **[EXAMPLES.md](docs/EXAMPLES.md)** — How to add programs
-- **[VALIDATION.md](docs/VALIDATION.md)** — Installation checks
-- **[CHANGELOG.md](CHANGELOG.md)** — Version history (EN & PT-BR)
+- **[SYSTEM.md](docs/SYSTEM.md)** — system group utilities
+- **[SHELL.md](docs/SHELL.md)** — Oh My Posh & Fira Code setup
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** — project structure & design
+- **[STRUCTURE.md](docs/STRUCTURE.md)** — file / function map
+- **[ADMIN-PRIVILEGES.md](docs/ADMIN-PRIVILEGES.md)** — 4 ways to elevate
+- **[EXAMPLES.md](docs/EXAMPLES.md)** — how to add programs
+- **[VALIDATION.md](docs/VALIDATION.md)** — installation checks
+- **[CHANGELOG.md](CHANGELOG.md)** — version history (EN & PT-BR)
+
+> ⚠️ **Safety.** `optimize` changes system services and policies. It is safe by
+> default; read [OPTIMIZE.md](docs/OPTIMIZE.md) and [SERVICES.md](docs/SERVICES.md)
+> first, and use [RESTORE.md](docs/RESTORE.md) to reverse anything.
 
 ## Support
 

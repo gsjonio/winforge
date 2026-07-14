@@ -6,7 +6,16 @@
 
 ### Overview
 
-The `customize` module applies 18+ Windows UI and shell customizations to match professional preferences: hidden file visibility, context menu cleanup, taskbar adjustments, and keyboard/mouse settings.
+The `customize` module ([src/modules/customize.ps1](../src/modules/customize.ps1)) applies 18+ Windows UI and shell customizations to match professional preferences: hidden file visibility, context menu cleanup, taskbar adjustments, and keyboard/mouse settings.
+
+### Risk & reversibility
+
+Nearly all of these are per-user (`HKCU`) preferences — cosmetic and low-risk, and
+reversible through the matching Windows Settings toggle (dark mode, hidden files,
+file extensions, mouse settings). The context-menu entries touch the `HKCU:\...\Classes\*`
+file-class keys; the Notepad++ entry is only added if Notepad++ is installed. None
+of these disable services. To revert the machine-wide state winforge changes, see
+[RESTORE.md](RESTORE.md); for service/optimize risks see [SERVICES.md](SERVICES.md).
 
 ### Usage
 
@@ -120,7 +129,17 @@ Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\P
 
 ### Visão Geral
 
-O módulo `customize` aplica 18+ customizações de UI e shell do Windows para corresponder às preferências profissionais: visibilidade de arquivos ocultos, limpeza de menu de contexto, ajustes da barra de tarefas e configurações de teclado/mouse.
+O módulo `customize` ([src/modules/customize.ps1](../src/modules/customize.ps1)) aplica 18+ customizações de UI e shell do Windows para corresponder às preferências profissionais: visibilidade de arquivos ocultos, limpeza de menu de contexto, ajustes da barra de tarefas e configurações de teclado/mouse.
+
+### Risco & reversibilidade
+
+Quase todas são preferências por usuário (`HKCU`) — cosméticas e de baixo risco, e
+reversíveis pelo botão correspondente nas Configurações do Windows (modo escuro,
+arquivos ocultos, extensões, mouse). As entradas de menu de contexto mexem nas
+chaves de classe de arquivo `HKCU:\...\Classes\*`; a entrada do Notepad++ só é
+adicionada se o Notepad++ estiver instalado. Nenhuma delas desabilita serviços.
+Para reverter o estado que o winforge muda, veja [RESTORE.md](RESTORE.md); para
+riscos de serviços/optimize veja [SERVICES.md](SERVICES.md).
 
 ### Uso
 

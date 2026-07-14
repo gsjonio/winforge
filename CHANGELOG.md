@@ -25,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   SmartScreen, the non-Store install lockdown, shadow copies). Idempotent, with a
   `-WhatIf` preview; never runs in the default setup. Adds a `Remove-RegistryValue`
   utility helper.
+- **Documentation**: explanatory `docs/OPTIMIZE.md` rewrite (per-tweak effect,
+  rationale, risk, honest reversibility), new `docs/SERVICES.md` (service reference
+  with factory defaults) and `docs/SYSTEM.md`, risk notes in `docs/CUSTOMIZE.md`,
+  `docs/STRUCTURE.md` updated, a README Documentation section, and refreshed Wiki
+  pages. Corrected the inaccurate "all reversible via Windows settings" claim.
 
 ### Changed
 
