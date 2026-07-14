@@ -56,7 +56,7 @@ function Install-Program {
     try {
         # Method 1: Try Winget
         Write-Log "Attempting: winget" -Level Info
-        winget install --id $WingetId --source winget --accept-source-agreements --accept-package-agreements -q 2>&1
+        winget install --id $WingetId --source winget --accept-source-agreements --accept-package-agreements --silent 2>&1
         if ($LASTEXITCODE -eq 0) {
             Write-Log "$Name installed successfully (winget)" -Level Success
             return $true
