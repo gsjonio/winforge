@@ -67,11 +67,8 @@ function Set-OptimizeConfiguration {
         Set-RegistryValue "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" "ShowFrequent" 0 "DWORD"
     }
 
-    # Disable Windows Defender SmartScreen
-    Apply-SystemConfig "Configure Windows Defender SmartScreen" {
-        Set-RegistryValue "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer" "SmartScreenEnabled" "Off" "String"
-        Set-RegistryValue "HKCU:\Software\Microsoft\Windows\CurrentVersion\AppHost" "EnableWebContentEvaluation" 0 "DWORD"
-    }
+    # NOTE: Windows Defender SmartScreen is intentionally NOT disabled. Turning it
+    # off is a security regression on a machine that downloads binaries (issue #11).
 
     # Disable sync settings
     Apply-SystemConfig "Disable settings sync" {
@@ -88,10 +85,8 @@ function Set-OptimizeConfiguration {
         Set-RegistryValue "HKLM:\Software\Policies\Microsoft\Windows\Windows Search" "AllowCortana" 0 "DWORD"
     }
 
-    # Disable web content evaluation in Microsoft Edge
-    Apply-SystemConfig "Disable web content evaluation in browsers" {
-        Set-RegistryValue "HKCU:\Software\Microsoft\Windows\CurrentVersion\AppHost" "EnableWebContentEvaluation" 0 "DWORD"
-    }
+    # NOTE: EnableWebContentEvaluation (SmartScreen web-content check) is left
+    # enabled too — same security feature as above (issue #11).
 
     # Disable Microsoft Consumer Experiences
     Apply-SystemConfig "Disable consumer experiences" {
