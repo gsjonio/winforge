@@ -163,9 +163,9 @@ Example: feat(installation): add Chocolatey fallback
 Add to README.md:
 
 ```markdown
-[![Lint](https://github.com/Gustavo496/windows-scripting-automation/actions/workflows/lint.yml/badge.svg)](https://github.com/Gustavo496/windows-scripting-automation/actions/workflows/lint.yml)
-[![Validation](https://github.com/Gustavo496/windows-scripting-automation/actions/workflows/validate.yml/badge.svg)](https://github.com/Gustavo496/windows-scripting-automation/actions/workflows/validate.yml)
-[![Security](https://github.com/Gustavo496/windows-scripting-automation/actions/workflows/security.yml/badge.svg)](https://github.com/Gustavo496/windows-scripting-automation/actions/workflows/security.yml)
+[![Lint](https://github.com/Gustavo496/winforge/actions/workflows/lint.yml/badge.svg)](https://github.com/Gustavo496/winforge/actions/workflows/lint.yml)
+[![Validation](https://github.com/Gustavo496/winforge/actions/workflows/validate.yml/badge.svg)](https://github.com/Gustavo496/winforge/actions/workflows/validate.yml)
+[![Security](https://github.com/Gustavo496/winforge/actions/workflows/security.yml/badge.svg)](https://github.com/Gustavo496/winforge/actions/workflows/security.yml)
 ```
 
 ## Workflow Triggers

@@ -1,14 +1,14 @@
 # Windows Post-Format Automation Setup
 
 [![PowerShell 7+](https://img.shields.io/badge/PowerShell-7.0%2B-blue)](https://github.com/PowerShell/PowerShell)
-[![Release: v0.6.1](https://img.shields.io/badge/release-v0.6.1-blue)](https://github.com/gsjonio/windows-scripting-automation/releases/tag/v0.6.1)
+[![Release: v0.6.1](https://img.shields.io/badge/release-v0.6.1-blue)](https://github.com/gsjonio/winforge/releases/tag/v0.6.1)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Docs: EN/PT-BR](https://img.shields.io/badge/docs-EN%2FPT--BR-orange)](README.md)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-gugamenezes-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/gugamenezes)
 
 🇺🇸 English
 
-**windows-scripting-automation**: *Automate Windows post-format setup & system optimization.*
+**winforge**: *Automate Windows post-format setup & system optimization.*
 
 A modular PowerShell 7+ framework for configuring Windows after clean install:
 program installation (15+ apps across 7 groups), system optimization (42+
@@ -69,8 +69,8 @@ protection rulesets.
 Clone and run with admin:
 
 ```powershell
-git clone https://github.com/gsjonio/windows-scripting-automation.git
-cd windows-scripting-automation
+git clone https://github.com/gsjonio/winforge.git
+cd winforge
 sudo .\setup.ps1
 ```
 
@@ -100,8 +100,8 @@ Windows 11 users: enable native `sudo` in Settings → System → For developers
 If you want to modify or inspect the code:
 
 ```powershell
-git clone https://github.com/gsjonio/windows-scripting-automation.git
-cd windows-scripting-automation
+git clone https://github.com/gsjonio/winforge.git
+cd winforge
 
 # Lint all PowerShell
 .\tools\lint.ps1
