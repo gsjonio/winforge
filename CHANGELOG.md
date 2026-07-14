@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.7.1] - 2026-07-14
+
+### Fixed
+
+- **CI shell injection**: `pr-checks.yml` interpolated the PR title, body and
+  base_ref directly into bash, so backticks in a PR title/body could execute on
+  the runner (and broke PRs whose body contained backticks). Untrusted fields
+  now pass via `env:` and are quoted. (#22)
+
+---
+
 ## [0.7.0] - 2026-07-14
 
 ### Added
@@ -357,6 +368,17 @@ Registro de todas as alterações notáveis deste projeto.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0.html).
+
+### 0.7.1 - 2026-07-14
+
+#### Corrigido
+
+- **Injeção de shell no CI**: o `pr-checks.yml` interpolava título, corpo e
+  base_ref do PR direto no bash, então crases num título/corpo de PR podiam
+  executar no runner (e quebravam PRs com crase). Campos não confiáveis agora
+  passam por `env:` e são citados. (#22)
+
+---
 
 ### 0.7.0 - 2026-07-14
 
