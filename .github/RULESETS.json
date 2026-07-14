@@ -2,7 +2,7 @@
   "rulesets": [
     {
       "name": "Main Branch Protection",
-      "description": "Protection rules for the main branch",
+      "description": "main is PR-only: no direct pushes, linear history, no force-push or deletion. Solo-friendly (0 required approvals). Required checks are limited to jobs that run on every PR; path-filtered checks (PSScriptAnalyzer, security, markdown) are intentionally not required so they cannot deadlock unrelated PRs.",
       "target": "branch",
       "enforcement": "active",
       "bypass_actors": [],
@@ -16,98 +16,35 @@
       },
       "rules": [
         {
-          "type": "creation",
-          "parameters": {
-            "restrict_to_administrators": false
-          }
+          "type": "deletion"
         },
         {
-          "type": "update",
-          "parameters": {
-            "restrict_to_administrators": false
-          }
-        },
-        {
-          "type": "deletion",
-          "parameters": {
-            "restrict_to_administrators": true
-          }
+          "type": "non_fast_forward"
         },
         {
           "type": "required_linear_history"
         },
         {
-          "type": "required_deployments",
-          "parameters": {
-            "required_deployment_environments": [
-              "production"
-            ]
-          }
-        },
-        {
-          "type": "required_status_checks",
-          "parameters": {
-            "required_status_checks": [
-              {
-                "context": "Lint",
-                "integration_id": null
-              },
-              {
-                "context": "Validate",
-                "integration_id": null
-              },
-              {
-                "context": "Security",
-                "integration_id": null
-              },
-              {
-                "context": "Documentation",
-                "integration_id": null
-              }
-            ],
-            "strict_required_status_checks_policy": true
-          }
-        },
-        {
           "type": "pull_request",
           "parameters": {
-            "dismiss_stale_reviews_on_push": true,
+            "dismiss_stale_reviews_on_push": false,
             "require_code_owner_review": false,
-            "require_last_push_approval": true,
-            "required_approving_review_count": 1,
+            "require_last_push_approval": false,
+            "required_approving_review_count": 0,
             "required_review_thread_resolution": false
           }
         },
         {
-          "type": "non_fast_forward"
-        }
-      ]
-    },
-    {
-      "name": "PR Quality Standards",
-      "description": "Quality gates for all pull requests",
-      "target": "pull_request",
-      "enforcement": "active",
-      "bypass_actors": [],
-      "conditions": {
-        "ref_name": {
-          "include": [
-            "refs/heads/*"
-          ],
-          "exclude": []
-        }
-      },
-      "rules": [
-        {
           "type": "required_status_checks",
           "parameters": {
+            "strict_required_status_checks_policy": false,
             "required_status_checks": [
-              {
-                "context": "PR Checks",
-                "integration_id": null
-              }
-            ],
-            "strict_required_status_checks_policy": false
+              { "context": "Validate Project Structure" },
+              { "context": "Validate Documentation" },
+              { "context": "Validate Git History" },
+              { "context": "PR Validation" },
+              { "context": "Commit Message Linting" }
+            ]
           }
         }
       ]
