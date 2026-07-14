@@ -6,7 +6,7 @@ function Install-ShellPrograms {
     # Update PowerShell to latest version before installing Oh My Posh
     Apply-SystemConfig "Update PowerShell to latest version" {
         Write-Log "Checking for PowerShell updates..." -Level Info
-        winget upgrade --id Microsoft.PowerShell -e -ErrorAction SilentlyContinue
+        winget upgrade --id Microsoft.PowerShell -e --accept-source-agreements --silent 2>&1 | Out-Null
         Write-Log "PowerShell update check completed" -Level Success
     }
 
