@@ -14,14 +14,25 @@
       .\setup.ps1 -Group dev
       .\setup.ps1  # executes all groups
 
+    .PARAMETER Profile
+    Safety profile for the optimize group: safe (default), desktop, or gaming.
+    'safe' applies only reversible tweaks; 'desktop' adds power/24-7 tweaks;
+    'gaming' adds network and aggressive service tweaks. Ignored by other groups.
+
     .PARAMETER SkipElevation
     Skip elevation check (for testing in current context).
 #>
 
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidAssignmentToAutomaticVariable', 'Profile',
+    Justification = 'Public -Profile parameter forwarded to the optimize module; the automatic $PROFILE variable is not used.')]
 param(
     [Parameter(Mandatory = $false)]
     [ValidateSet("base", "dev", "gaming", "system", "optimize", "customize", "shell")]
     [string]$Group,
+
+    [Parameter(Mandatory = $false)]
+    [ValidateSet("safe", "desktop", "gaming")]
+    [string]$Profile = "safe",
 
     [switch]$SkipElevation
 )
@@ -108,9 +119,11 @@ foreach ($groupName in $groupsToRun) {
                 & "Install-$groupName`Programs"
             }
 
-            # Apply configuration
+            # Apply configuration (optimize takes the safety Profile)
             if (Get-Command -Name "Set-$groupName`Configuration" -ErrorAction SilentlyContinue) {
-                & "Set-$groupName`Configuration"
+                $configArgs = @{}
+                if ($groupName -eq "optimize") { $configArgs["Profile"] = $Profile }
+                & "Set-$groupName`Configuration" @configArgs
             }
         }
         catch {

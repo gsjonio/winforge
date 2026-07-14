@@ -37,10 +37,12 @@ system, optimize, customize, shell). Smart detection with 4 methods (executable,
 package manager, winget, registry), idempotent (safe to run multiple times),
 and 3-method fallback chain (Winget → Chocolatey → custom URL) for max success.
 
-**System Optimization.** 42+ tweaks covering services (15 disabled), power plan
-(High Performance), visual effects, network (QoS/throttling disabled), storage
-(TRIM, Shadow Copies disabled), and shell (Sleep/Hibernation off for 24/7
-active). All reversible via Windows settings.
+**System Optimization.** Safe by default. A `-Profile` (safe / desktop / gaming,
+cumulative) controls how aggressive it gets: `safe` applies only reversible
+privacy, visual, storage (TRIM, Storage Sense) and harmless-service tweaks;
+`desktop` adds power/24-7 tweaks; `gaming` adds network/latency tweaks and
+aggressive service disables (SysMain, DPS, WinRM). It never disables VSS/System
+Restore, StorSvc (Microsoft Store), or SmartScreen.
 
 **UI Customization.** 18+ Windows Explorer and shell tweaks: dark mode, hidden
 files, file extensions visible, context menu cleanup, taskbar optimization,
@@ -214,9 +216,19 @@ sudo .\tools\update.ps1
 
 ### What gets optimized
 
-**Services disabled (15):**
-DiagTrack, dmwappushservice, OneSyncSvc, HvHost, SharedAccess, SysMain, StorSvc,
-CscService, DPS, TabletInputService, TrkWks, stisvc, WMPNetworkSvc, WinRM, lfsvc
+**Profiles.** `optimize` is safe by default; `-Profile safe|desktop|gaming`
+(cumulative) controls scope:
+
+```powershell
+.\setup.ps1 -Group optimize                  # safe (default)
+.\setup.ps1 -Group optimize -Profile gaming   # everything
+```
+
+**Services disabled (safe):**
+DiagTrack, dmwappushservice, OneSyncSvc, HvHost, SharedAccess, CscService,
+TabletInputService, TrkWks, stisvc, WMPNetworkSvc, lfsvc. The `gaming` profile
+additionally disables SysMain, DPS and WinRM. **StorSvc, VSS and SmartScreen are
+never disabled** (they broke real machines).
 
 **Power & Performance:**
 
@@ -228,9 +240,9 @@ CscService, DPS, TabletInputService, TrkWks, stisvc, WMPNetworkSvc, WinRM, lfsvc
 
 **Storage:**
 
-- Shadow Copies (System Restore) disabled
 - Automatic TRIM enabled for SSDs
 - Storage Sense configured (auto temp cleanup)
+- VSS / System Restore left intact (never disabled)
 
 **Visual:**
 

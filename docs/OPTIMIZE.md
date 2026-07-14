@@ -6,16 +6,19 @@
 
 ### Overview
 
-The `optimize` module applies 15+ system optimizations and privacy tweaks via Windows Registry settings, equivalent to Group Policy Editor (gpedit) configurations.
+The `optimize` module applies system optimizations and privacy tweaks via Windows Registry settings and service configuration. It is **safe by default**: a `-Profile` (safe / desktop / gaming, cumulative) controls how aggressive it is. The `safe` profile never disables VSS/System Restore, StorSvc (Microsoft Store), SmartScreen, DPS or WinRM — the destructive tweaks were removed or made opt-in after breaking a real machine.
 
 ### Usage
 
 ```powershell
-# Run optimization module
+# Safe defaults (privacy, visual, storage, harmless services)
 .\setup.ps1 -Group optimize
 
-# Or include in full setup
-.\setup.ps1  # includes optimize in default run
+# Add power / 24-7 tweaks
+.\setup.ps1 -Group optimize -Profile desktop
+
+# Everything, incl. network + aggressive service disables (SysMain, DPS, WinRM)
+.\setup.ps1 -Group optimize -Profile gaming
 ```
 
 ### Optimizations Applied
@@ -55,8 +58,9 @@ The `optimize` module applies 15+ system optimizations and privacy tweaks via Wi
 
 #### Security Features
 
-- ✅ Disable Windows Defender SmartScreen (off)
 - ✅ Configure privacy policies
+- SmartScreen is **not** disabled — turning it off is a security regression (removed, issue #11)
+- Non-Store install lockdown is **opt-in** (gaming profile only), never in the safe default
 
 ### Registry Locations Modified
 
@@ -125,16 +129,19 @@ Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection
 
 ### Visão Geral
 
-O módulo `optimize` aplica 15+ otimizações de sistema e ajustes de privacidade via configurações do Registro do Windows, equivalente às configurações do Editor de Política de Grupo (gpedit).
+O módulo `optimize` aplica otimizações de sistema e ajustes de privacidade via Registro do Windows e configuração de serviços. É **seguro por padrão**: um `-Profile` (safe / desktop / gaming, cumulativo) controla o quão agressivo ele é. O perfil `safe` nunca desabilita VSS/Restauração do Sistema, StorSvc (Microsoft Store), SmartScreen, DPS ou WinRM — os tweaks destrutivos foram removidos ou tornados opt-in depois de quebrarem uma máquina real.
 
 ### Uso
 
 ```powershell
-# Executar módulo de otimização
+# Padrão seguro (privacidade, visual, armazenamento, serviços inofensivos)
 .\setup.ps1 -Group optimize
 
-# Ou incluir na configuração completa
-.\setup.ps1  # inclui optimize por padrão
+# Adiciona tweaks de energia / 24-7
+.\setup.ps1 -Group optimize -Profile desktop
+
+# Tudo, incl. rede + desabilitação agressiva de serviços (SysMain, DPS, WinRM)
+.\setup.ps1 -Group optimize -Profile gaming
 ```
 
 ### Otimizações Aplicadas
@@ -174,8 +181,9 @@ O módulo `optimize` aplica 15+ otimizações de sistema e ajustes de privacidad
 
 #### Recursos de Segurança
 
-- ✅ Desabilitar Windows Defender SmartScreen
 - ✅ Configurar políticas de privacidade
+- SmartScreen **não** é desabilitado — desligá-lo é uma regressão de segurança (removido, issue #11)
+- Bloqueio de instalação fora da Store é **opt-in** (apenas perfil gaming), nunca no padrão safe
 
 ### Reversibilidade
 
