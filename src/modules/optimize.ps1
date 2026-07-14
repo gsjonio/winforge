@@ -203,8 +203,20 @@ function Set-OptimizeConfiguration {
     }
 
     Apply-SystemConfig "Remove network throttling limit" {
-        Set-RegistryValue "HKLM:\SYSTEM\CurrentControlSet\Services\Psched\Parameters" "NetworkThrottlingIndex" 0xFFFFFFFF "DWORD"
-        Write-Log "Network throttling removed - faster updates and downloads" -Level Info
+        $throttlePath = "HKLM:\SYSTEM\CurrentControlSet\Services\Psched\Parameters"
+        # -1 is written as the unsigned DWORD 0xFFFFFFFF; passing 0xFFFFFFFF (a
+        # UInt32) overflows Int32 DWORD coercion and can write the wrong value.
+        $maxDword = -1
+        Set-RegistryValue $throttlePath "NetworkThrottlingIndex" $maxDword "DWORD"
+
+        # Read-back validation: a DWORD of 0xFFFFFFFF reads back as -1.
+        $written = (Get-ItemProperty -Path $throttlePath -Name "NetworkThrottlingIndex" -ErrorAction SilentlyContinue).NetworkThrottlingIndex
+        if ($written -ne -1) {
+            Write-Log "NetworkThrottlingIndex expected 0xFFFFFFFF but read back '$written'" -Level Warning
+        }
+        else {
+            Write-Log "Network throttling removed - faster updates and downloads" -Level Info
+        }
     }
 
     # Power/Energy Optimizations (Desktop 24/7)
