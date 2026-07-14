@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and/or Chocolatey — a workaround for a broken Microsoft Store, since winget's
   community source is independent of it. Supports `-Source winget|choco|all`,
   `-DryRun` (list only), and `-IncludeUnknown` (Store-registered apps).
+- **Restore capability** (`-Group restore`, `src/modules/restore.ps1`): reverses
+  the `optimize` changes — re-enables services (StorSvc, VSS, DPS, SysMain, WinRM)
+  to their Windows defaults and clears policy keys (Game Bar `AllowGameDVR`,
+  SmartScreen, the non-Store install lockdown, shadow copies). Idempotent, with a
+  `-WhatIf` preview; never runs in the default setup. Adds a `Remove-RegistryValue`
+  utility helper.
 
 ### Changed
 
@@ -354,6 +360,12 @@ e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0
 - **Ferramenta de atualização** (`tools/update.ps1`): atualiza apps via winget
   e/ou Chocolatey — solução para uma Microsoft Store quebrada, já que a fonte
   community do winget é independente dela.
+- **Capacidade de restauração** (`-Group restore`, `src/modules/restore.ps1`):
+  reverte as mudanças do `optimize` — religa serviços (StorSvc, VSS, DPS, SysMain,
+  WinRM) aos padrões do Windows e limpa chaves de política (Game Bar `AllowGameDVR`,
+  SmartScreen, bloqueio de instalação fora da Store, shadow copies). Idempotente,
+  com prévia `-WhatIf`; nunca roda no setup padrão. Adiciona o utilitário
+  `Remove-RegistryValue`.
 
 #### Alterado
 

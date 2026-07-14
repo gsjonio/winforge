@@ -9,10 +9,13 @@
     Runs selectively by group or executes all groups.
 
     .PARAMETER Group
-    Specific group to execute: base, dev, gaming, or omit for all.
+    Specific group to execute: base, dev, gaming, or omit for all. The 'restore'
+    group reverses winforge's changes and runs ONLY when named explicitly (it is
+    never part of the default all-groups run). Use -WhatIf to preview it.
     Examples:
       .\setup.ps1 -Group dev
-      .\setup.ps1  # executes all groups
+      .\setup.ps1 -Group restore -WhatIf   # preview the reversal
+      .\setup.ps1  # executes all groups (never restore)
 
     .PARAMETER Profile
     Safety profile for the optimize group: safe (default), desktop, or gaming.
@@ -23,11 +26,12 @@
     Skip elevation check (for testing in current context).
 #>
 
+[CmdletBinding(SupportsShouldProcess)]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidAssignmentToAutomaticVariable', 'Profile',
     Justification = 'Public -Profile parameter forwarded to the optimize module; the automatic $PROFILE variable is not used.')]
 param(
     [Parameter(Mandatory = $false)]
-    [ValidateSet("base", "dev", "gaming", "system", "optimize", "customize", "shell")]
+    [ValidateSet("base", "dev", "gaming", "system", "optimize", "customize", "shell", "restore")]
     [string]$Group,
 
     [Parameter(Mandatory = $false)]
@@ -103,6 +107,8 @@ if ($Group) {
     Write-Log "Running group: $Group" -Level Info
 }
 else {
+    # NOTE: 'restore' is intentionally excluded from the default run — it reverses
+    # winforge's changes and must be requested explicitly (-Group restore).
     $groupsToRun = @("base", "dev", "gaming", "system", "optimize", "customize", "shell")
     Write-Log "Running all groups" -Level Info
 }

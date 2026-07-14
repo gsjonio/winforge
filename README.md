@@ -172,6 +172,11 @@ sudo .\setup.ps1 -Group shell      # Install Oh My Posh + Fira Code
 | **optimize** | System tweaks | 42 optimizations (services, power, network, storage) |
 | **customize** | UI customizations | 18 Windows/shell tweaks |
 | **shell** | Terminal enhancement | Oh My Posh (half-life theme) + Fira Code |
+| **restore** | Undo winforge changes | Reverts services + policy keys to Windows defaults — explicit-only, supports `-WhatIf` |
+
+> **Safety.** `optimize` changes system services and policies. Read
+> [docs/OPTIMIZE.md](docs/OPTIMIZE.md) first, and use
+> [docs/RESTORE.md](docs/RESTORE.md) (`-Group restore`) to reverse them.
 
 ### Code quality
 
@@ -210,6 +215,20 @@ sudo .\tools\update.ps1
 
 # winget only, including Store-registered apps with unknown versions
 .\tools\update.ps1 -Source winget -IncludeUnknown
+```
+
+### Restore (undo winforge)
+
+Reverse the `optimize` changes — re-enable services (StorSvc, VSS, DPS, SysMain,
+WinRM) and clear policy keys (Game Bar capture, SmartScreen, non-Store lockdown,
+shadow copies). Never runs in the default setup. See [docs/RESTORE.md](docs/RESTORE.md).
+
+```powershell
+# Preview, change nothing
+.\setup.ps1 -Group restore -WhatIf
+
+# Apply (as admin)
+sudo .\setup.ps1 -Group restore
 ```
 
 ## Optimization Details
