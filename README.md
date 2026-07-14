@@ -90,6 +90,7 @@ sudo .\setup.ps1 -Group optimize   # Just system optimizations
 | `setup.ps1 -Group optimize/customize/shell` | Admin | Registry, services, fonts |
 | `.\tools\lint.ps1` | None | Code quality check |
 | `.\tools\validate.ps1` | None | Installation verification |
+| `.\tools\update.ps1` | Admin (recommended) | Update installed apps (winget/choco) |
 
 Windows 11 users: enable native `sudo` in Settings → System → For developers
 → Terminal → "Enable sudo" to avoid UAC prompts. See [Windows 11 Native
@@ -191,6 +192,22 @@ sudo .\setup.ps1 -Group shell      # Install Oh My Posh + Fira Code
 
 # Verify what's installed
 Get-Package | Where-Object { $_.Name -like "*firefox*" }
+```
+
+### Update apps
+
+Update installed applications through winget/Chocolatey — works even when the
+Microsoft Store is broken, since winget's community source is independent of it.
+
+```powershell
+# Show what would be updated (no changes)
+.\tools\update.ps1 -DryRun
+
+# Update everything (run as admin for machine-wide apps)
+sudo .\tools\update.ps1
+
+# winget only, including Store-registered apps with unknown versions
+.\tools\update.ps1 -Source winget -IncludeUnknown
 ```
 
 ## Optimization Details

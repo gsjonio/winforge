@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **App update tool** (`tools/update.ps1`): upgrades installed apps via winget
+  and/or Chocolatey — a workaround for a broken Microsoft Store, since winget's
+  community source is independent of it. Supports `-Source winget|choco|all`,
+  `-DryRun` (list only), and `-IncludeUnknown` (Store-registered apps).
+
+---
+
 ## [0.6.1] - 2026-07-14
 
 ### Fixed
@@ -259,7 +270,7 @@ recorded in the changelog._
 - ✅ Backward compatible design
 - ✅ Modular group-based approach
 
-## [Unreleased]
+## Roadmap
 
 ### Planned Features
 
