@@ -23,12 +23,13 @@ jobs:
 
       - name: Validate PR title
         shell: bash
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
         run: |
-          title="${{ github.event.pull_request.title }}"
-          echo "PR Title: $title"
+          echo "PR Title: $TITLE"
 
           # Check conventional commit format
-          if [[ $title =~ ^(feat|fix|docs|style|refactor|perf|chore|test)(\(.+\))?:\ .{10,} ]]; then
+          if [[ "$TITLE" =~ ^(feat|fix|docs|style|refactor|perf|chore|test)(\(.+\))?:\ .{10,} ]]; then
             echo "✓ PR title follows conventional commit format"
           else
             echo "⚠ PR title should follow: type(scope): description"
@@ -37,16 +38,16 @@ jobs:
 
       - name: Check PR body
         shell: bash
+        env:
+          BODY: ${{ github.event.pull_request.body }}
         run: |
-          body="${{ github.event.pull_request.body }}"
-
-          if [ -z "$body" ]; then
+          if [ -z "$BODY" ]; then
             echo "⚠ PR description is empty"
           else
             echo "✓ PR has description"
           fi
 
-          if [[ $body == *"Closes #"* ]] || [[ $body == *"Fixes #"* ]]; then
+          if [[ "$BODY" == *"Closes #"* ]] || [[ "$BODY" == *"Fixes #"* ]]; then
             echo "✓ PR links to issue"
           else
             echo "⚠ PR should link to related issues"
@@ -64,9 +65,11 @@ jobs:
 
       - name: Check for files that shouldn't change
         shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
           # Get list of changed files
-          changed_files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          changed_files=$(git diff --name-only "origin/$BASE_REF...HEAD")
 
           echo "Changed files:"
           echo "$changed_files"
@@ -93,10 +96,12 @@ jobs:
 
       - name: Validate commit messages
         shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
           echo "Checking commit messages in PR..."
 
-          commits=$(git log origin/${{ github.base_ref }}...HEAD --pretty=format:%B)
+          commits=$(git log "origin/$BASE_REF...HEAD" --pretty=format:%B)
 
           valid_prefixes="feat|fix|docs|style|refactor|perf|chore|test"
 
@@ -109,7 +114,7 @@ jobs:
           fi
 
           # Count commits
-          commit_count=$(git rev-list --count origin/${{ github.base_ref }}...HEAD)
+          commit_count=$(git rev-list --count "origin/$BASE_REF...HEAD")
           echo "Commits in PR: $commit_count"
 
           if [ "$commit_count" -gt 20 ]; then
@@ -128,11 +133,13 @@ jobs:
 
       - name: Check PR size
         shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
           # Get file statistics
-          additions=$(git diff --stat origin/${{ github.base_ref }}...HEAD | tail -1 | awk '{print $4}')
-          deletions=$(git diff --stat origin/${{ github.base_ref }}...HEAD | tail -1 | awk '{print $6}')
-          files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | wc -l)
+          additions=$(git diff --stat "origin/$BASE_REF...HEAD" | tail -1 | awk '{print $4}')
+          deletions=$(git diff --stat "origin/$BASE_REF...HEAD" | tail -1 | awk '{print $6}')
+          files=$(git diff --name-only "origin/$BASE_REF...HEAD" | wc -l)
 
           echo "PR Statistics:"
           echo "- Files changed: $files"
