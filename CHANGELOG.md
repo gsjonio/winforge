@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [0.7.0] - 2026-07-14
 
 ### Added
 
@@ -358,7 +358,7 @@ Registro de todas as alterações notáveis deste projeto.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0.html).
 
-### Não Lançado
+### 0.7.0 - 2026-07-14
 
 #### Adicionado
 
