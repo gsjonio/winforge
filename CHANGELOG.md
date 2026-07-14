@@ -11,6 +11,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.1] - 2026-07-14
+
+### Fixed
+
+- **Elevation dropped the `-Group` argument**: `Request-Elevation` forwarded the
+  function's own (empty) `$args` instead of the script parameters, so running
+  `.\setup.ps1 -Group dev` without admin re-launched elevated and ran **all**
+  groups. It now forwards the original bound parameters.
+- **Installs were never silent**: `Install-Program` passed `winget install ... -q`,
+  but `-q` is winget's `--query` flag, not silent mode. Changed to `--silent`.
+- **PowerShell self-upgrade passed a bogus argument**: `shell.ps1` ran
+  `winget upgrade ... -ErrorAction SilentlyContinue`; `-ErrorAction` is a
+  PowerShell parameter that winget received as a literal argument. Removed.
+- **`Get-RegistryValue` was broken**: used `return if (...)` (invalid — `if` is
+  not an expression) and a hive map that rejected the `HKCU:\` form used
+  everywhere else. Rewritten to mirror `Set-RegistryValue`'s path normalization.
+- **`tools/validate.ps1` never worked**: it sourced `lib/helpers.ps1` and read a
+  `groups/` directory that do not exist in the current layout, and only printed a
+  manual instruction. Rewritten to read program lists from `src/modules` via AST
+  parsing and report real installation status; replaced the reserved `-Verbose`
+  parameter with `-ShowDetails` and extended coverage to all seven groups.
+
+---
+
+## [0.6.0] - 2026-07-13
+
+_Reconstructed from git history — this release was tagged and published but never
+recorded in the changelog._
+
+### Added
+
+- **Optimize Module** — desktop-focused system tuning:
+  - Disable non-essential desktop services (keeping Xbox, Bluetooth, Game Bar)
+  - Disk / storage optimizations
+  - Power / energy optimizations for 24/7 desktop operation
+  - Network gaming optimizations (QoS and throttling)
+  - Visual performance tuning and automatic cleanup
+- **MIT License** and license badge.
+
+### Fixed
+
+- Registry path handling on PowerShell 7+; parent paths are now created
+  recursively.
+- Added an explicit winget source to the installation command.
+
+### Changed
+
+- Redesigned README following a professional layout; removed the Portuguese
+  language selector from the header.
+- Removed defragmentation/TRIM scheduling from the optimize routines.
+- Reverted experimental RAM/swap optimizations.
+
+---
+
 ## [0.5.2] - 2026-06-25
 
 ### Changed
@@ -232,7 +286,7 @@ This project follows [Semantic Versioning](https://semver.org/):
 ## Installation Success Rates
 
 | Configuration | Success Rate |
-|---|---|
+| --- | --- |
 | Winget only | ~70% |
 | Winget + Chocolatey | ~95% |
 | All 3 methods | ~99% |
@@ -249,6 +303,7 @@ This project follows [Semantic Versioning](https://semver.org/):
 ---
 
 For more information, see:
+
 - [README.md](README.md) - Getting started
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - Project design
 - [docs/EXAMPLES.md](docs/EXAMPLES.md) - Usage examples
