@@ -129,9 +129,9 @@ function Set-OptimizeConfiguration {
         Get-Service -Name "SysMain" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
     }
 
-    Apply-SystemConfig "Disable Storage service" {
-        Get-Service -Name "StorSvc" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
-    }
+    # NOTE: StorSvc (Storage Service) is intentionally NOT disabled. The Microsoft
+    # Store and the app-licensing stack depend on it at runtime; disabling it
+    # breaks Store downloads/updates with a generic error (issue #9).
 
     Apply-SystemConfig "Disable offline files" {
         Get-Service -Name "CscService" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
