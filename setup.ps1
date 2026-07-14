@@ -43,7 +43,7 @@ $modulesPath = Join-Path $srcPath "modules"
 . "$utilsPath\System.ps1"
 
 if (-not $SkipElevation) {
-    Request-Elevation
+    Request-Elevation -ScriptPath $MyInvocation.MyCommand.Path -BoundParameters $PSBoundParameters
 }
 
 # 3. Validation (installation detection)

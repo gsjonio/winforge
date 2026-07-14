@@ -5,15 +5,36 @@ function Test-IsElevated {
 }
 
 function Request-Elevation {
-    if (-not (Test-IsElevated)) {
-        Write-Log "Requesting administrator privileges..." -Level Warning
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ScriptPath,
 
-        $psPath = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
-        $argList = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $args"
+        # Original script params to forward to the elevated instance (e.g. -Group).
+        [System.Collections.IDictionary]$BoundParameters = @{}
+    )
 
-        Start-Process -FilePath $psPath -ArgumentList $argList -Verb RunAs -Wait
-        exit $LASTEXITCODE
+    if (Test-IsElevated) {
+        return
     }
+
+    Write-Log "Requesting administrator privileges..." -Level Warning
+
+    $psPath = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
+    $argList = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "`"$ScriptPath`"")
+
+    foreach ($key in $BoundParameters.Keys) {
+        $value = $BoundParameters[$key]
+        if ($value -is [switch] -or $value -is [bool]) {
+            if ($value) { $argList += "-$key" }
+        }
+        else {
+            $argList += "-$key"
+            $argList += "`"$value`""
+        }
+    }
+
+    Start-Process -FilePath $psPath -ArgumentList $argList -Verb RunAs -Wait
+    exit $LASTEXITCODE
 }
 
 function Wait-ProcessExit {
