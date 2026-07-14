@@ -1,7 +1,7 @@
 # Windows Post-Format Automation Setup
 
 [![PowerShell 7+](https://img.shields.io/badge/PowerShell-7.0%2B-blue)](https://github.com/PowerShell/PowerShell)
-[![Release: v0.7.0](https://img.shields.io/badge/release-v0.7.0-blue)](https://github.com/gsjonio/winforge/releases/tag/v0.7.0)
+[![Release: v0.7.1](https://img.shields.io/badge/release-v0.7.1-blue)](https://github.com/gsjonio/winforge/releases/tag/v0.7.1)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Docs: EN/PT-BR](https://img.shields.io/badge/docs-EN%2FPT--BR-orange)](README.md)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-gugamenezes-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/gugamenezes)
