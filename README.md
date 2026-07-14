@@ -1,7 +1,7 @@
 # Windows Post-Format Automation Setup
 
 [![PowerShell 7+](https://img.shields.io/badge/PowerShell-7.0%2B-blue)](https://github.com/PowerShell/PowerShell)
-[![Release: v0.6.1](https://img.shields.io/badge/release-v0.6.1-blue)](https://github.com/gsjonio/winforge/releases/tag/v0.6.1)
+[![Release: v0.7.0](https://img.shields.io/badge/release-v0.7.0-blue)](https://github.com/gsjonio/winforge/releases/tag/v0.7.0)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Docs: EN/PT-BR](https://img.shields.io/badge/docs-EN%2FPT--BR-orange)](README.md)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-gugamenezes-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/gugamenezes)
@@ -37,10 +37,12 @@ system, optimize, customize, shell). Smart detection with 4 methods (executable,
 package manager, winget, registry), idempotent (safe to run multiple times),
 and 3-method fallback chain (Winget → Chocolatey → custom URL) for max success.
 
-**System Optimization.** 42+ tweaks covering services (15 disabled), power plan
-(High Performance), visual effects, network (QoS/throttling disabled), storage
-(TRIM, Shadow Copies disabled), and shell (Sleep/Hibernation off for 24/7
-active). All reversible via Windows settings.
+**System Optimization.** Safe by default. A `-Profile` (safe / desktop / gaming,
+cumulative) controls how aggressive it gets: `safe` applies only reversible
+privacy, visual, storage (TRIM, Storage Sense) and harmless-service tweaks;
+`desktop` adds power/24-7 tweaks; `gaming` adds network/latency tweaks and
+aggressive service disables (SysMain, DPS, WinRM). It never disables VSS/System
+Restore, StorSvc (Microsoft Store), or SmartScreen.
 
 **UI Customization.** 18+ Windows Explorer and shell tweaks: dark mode, hidden
 files, file extensions visible, context menu cleanup, taskbar optimization,
@@ -170,6 +172,11 @@ sudo .\setup.ps1 -Group shell      # Install Oh My Posh + Fira Code
 | **optimize** | System tweaks | 42 optimizations (services, power, network, storage) |
 | **customize** | UI customizations | 18 Windows/shell tweaks |
 | **shell** | Terminal enhancement | Oh My Posh (half-life theme) + Fira Code |
+| **restore** | Undo winforge changes | Reverts services + policy keys to Windows defaults — explicit-only, supports `-WhatIf` |
+
+> **Safety.** `optimize` changes system services and policies. Read
+> [docs/OPTIMIZE.md](docs/OPTIMIZE.md) first, and use
+> [docs/RESTORE.md](docs/RESTORE.md) (`-Group restore`) to reverse them.
 
 ### Code quality
 
@@ -210,13 +217,37 @@ sudo .\tools\update.ps1
 .\tools\update.ps1 -Source winget -IncludeUnknown
 ```
 
+### Restore (undo winforge)
+
+Reverse the `optimize` changes — re-enable services (StorSvc, VSS, DPS, SysMain,
+WinRM) and clear policy keys (Game Bar capture, SmartScreen, non-Store lockdown,
+shadow copies). Never runs in the default setup. See [docs/RESTORE.md](docs/RESTORE.md).
+
+```powershell
+# Preview, change nothing
+.\setup.ps1 -Group restore -WhatIf
+
+# Apply (as admin)
+sudo .\setup.ps1 -Group restore
+```
+
 ## Optimization Details
 
 ### What gets optimized
 
-**Services disabled (15):**
-DiagTrack, dmwappushservice, OneSyncSvc, HvHost, SharedAccess, SysMain, StorSvc,
-CscService, DPS, TabletInputService, TrkWks, stisvc, WMPNetworkSvc, WinRM, lfsvc
+**Profiles.** `optimize` is safe by default; `-Profile safe|desktop|gaming`
+(cumulative) controls scope:
+
+```powershell
+.\setup.ps1 -Group optimize                  # safe (default)
+.\setup.ps1 -Group optimize -Profile gaming   # everything
+```
+
+**Services disabled (safe):**
+DiagTrack, dmwappushservice, OneSyncSvc, HvHost, SharedAccess, CscService,
+TabletInputService, TrkWks, stisvc, WMPNetworkSvc, lfsvc. The `gaming` profile
+additionally disables SysMain, DPS and WinRM. **StorSvc, VSS and SmartScreen are
+never disabled** (they broke real machines).
 
 **Power & Performance:**
 
@@ -228,9 +259,9 @@ CscService, DPS, TabletInputService, TrkWks, stisvc, WMPNetworkSvc, WinRM, lfsvc
 
 **Storage:**
 
-- Shadow Copies (System Restore) disabled
 - Automatic TRIM enabled for SSDs
 - Storage Sense configured (auto temp cleanup)
+- VSS / System Restore left intact (never disabled)
 
 **Visual:**
 
@@ -317,16 +348,25 @@ Change themes: Edit `$env:APPDATA\oh-my-posh\config.json`. 100+ themes at
 
 ## Documentation
 
-Full guides for each component:
+Two layers: the **[Wiki](https://github.com/gsjonio/winforge/wiki)** is the
+narrative/onboarding layer; **`docs/`** is the reference layer.
 
-- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** — Project structure & design
-- **[ADMIN-PRIVILEGES.md](docs/ADMIN-PRIVILEGES.md)** — 4 ways to elevate
-- **[SHELL.md](docs/SHELL.md)** — Oh My Posh & Fira Code setup
-- **[OPTIMIZE.md](docs/OPTIMIZE.md)** — 42 tweaks explained + how to undo
+- **[OPTIMIZE.md](docs/OPTIMIZE.md)** — every tweak explained (effect, risk, reversibility)
+- **[SERVICES.md](docs/SERVICES.md)** — every service touched + factory defaults
+- **[RESTORE.md](docs/RESTORE.md)** — reverse winforge's changes (`-Group restore`)
 - **[CUSTOMIZE.md](docs/CUSTOMIZE.md)** — UI changes explained
-- **[EXAMPLES.md](docs/EXAMPLES.md)** — How to add programs
-- **[VALIDATION.md](docs/VALIDATION.md)** — Installation checks
-- **[CHANGELOG.md](CHANGELOG.md)** — Version history (EN & PT-BR)
+- **[SYSTEM.md](docs/SYSTEM.md)** — system group utilities
+- **[SHELL.md](docs/SHELL.md)** — Oh My Posh & Fira Code setup
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** — project structure & design
+- **[STRUCTURE.md](docs/STRUCTURE.md)** — file / function map
+- **[ADMIN-PRIVILEGES.md](docs/ADMIN-PRIVILEGES.md)** — 4 ways to elevate
+- **[EXAMPLES.md](docs/EXAMPLES.md)** — how to add programs
+- **[VALIDATION.md](docs/VALIDATION.md)** — installation checks
+- **[CHANGELOG.md](CHANGELOG.md)** — version history (EN & PT-BR)
+
+> ⚠️ **Safety.** `optimize` changes system services and policies. It is safe by
+> default; read [OPTIMIZE.md](docs/OPTIMIZE.md) and [SERVICES.md](docs/SERVICES.md)
+> first, and use [RESTORE.md](docs/RESTORE.md) to reverse anything.
 
 ## Support
 

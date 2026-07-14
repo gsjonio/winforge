@@ -47,6 +47,49 @@ function Set-RegistryValue {
     }
 }
 
+<#
+.SYNOPSIS
+    Removes a registry value, letting Windows fall back to its default.
+.DESCRIPTION
+    Deletes a single value from a registry key. Preferred over writing a
+    "default" value when the true Windows default is the value being absent
+    (e.g. policy keys). Accepts both "HKLM\path" and "HKLM:\path" forms and is
+    idempotent: a missing key or value is a no-op, not an error.
+.PARAMETER Path
+    Registry key path (HKLM:\..., HKCU:\..., or the colon-less form).
+.PARAMETER Name
+    Name of the value to remove.
+.EXAMPLE
+    Remove-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR"
+#>
+function Remove-RegistryValue {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Name
+    )
+
+    try {
+        # Normalize to provider format, matching Set-RegistryValue
+        $fullPath = if ($Path.Contains(':\')) {
+            $Path
+        } else {
+            $Path -replace '^(HKCU|HKLM|HKCR|HKCC|HKU)([:\\])', '$1:\' -replace '\\\\', '\'
+        }
+
+        if (Test-Path -LiteralPath $fullPath) {
+            Remove-ItemProperty -LiteralPath $fullPath -Name $Name -Force -ErrorAction SilentlyContinue
+        }
+        return $true
+    }
+    catch {
+        Write-Log "Warning: could not remove '$Name' from '$Path': $_" -Level Warning
+        return $false
+    }
+}
+
 function Get-RegistryValue {
     param(
         [Parameter(Mandatory = $true)]

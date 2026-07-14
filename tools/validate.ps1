@@ -22,7 +22,7 @@
 
 param(
     [Parameter(Mandatory = $false)]
-    [ValidateSet("base", "dev", "gaming", "system", "optimize", "customize", "shell")]
+    [ValidateSet("base", "dev", "gaming", "system", "optimize", "customize", "shell", "restore")]
     [string]$Group,
 
     [switch]$ShowDetails
@@ -66,6 +66,91 @@ function Get-ModulePrograms {
     }
 }
 
+# Safety assertions for the optimize module: the default 'safe' profile must
+# never disable services that break core Windows (Store, System Restore,
+# diagnostics, remote mgmt). Uses the pure Get-OptimizeTweaks selector, so it
+# runs nothing and needs no elevation.
+function Test-OptimizeSafety {
+    $optimizeFile = Join-Path $modulesPath "optimize.ps1"
+    if (-not (Test-Path -Path $optimizeFile)) {
+        Write-Log "optimize.ps1 not found - skipping safety checks" -Level Warning
+        return $true
+    }
+    . $optimizeFile
+
+    $ok = $true
+    $forbidden = @('VSS', 'StorSvc', 'DPS', 'WinRM', 'SysMain')
+
+    Write-GroupHeader "OPTIMIZE - Safety Assertions"
+
+    # 1. safe profile must not disable any critical service
+    $safe = Get-OptimizeTweaks -Profile safe
+    $hits = @($safe.Services | Where-Object { $_ -in $forbidden })
+    if ($hits.Count -gt 0) {
+        Write-Log "FAIL: safe profile disables: $($hits -join ', ')" -Level Error; $ok = $false
+    }
+    else {
+        Write-Log "safe profile disables no critical service" -Level Success
+    }
+
+    # 2. VSS and StorSvc must never be disabled on any profile (removed entirely)
+    $allSvc = (Get-OptimizeTweaks -Profile gaming).Services
+    foreach ($svc in @('VSS', 'StorSvc')) {
+        if ($svc -in $allSvc) {
+            Write-Log "FAIL: $svc is disabled on some profile" -Level Error; $ok = $false
+        }
+    }
+
+    # 3. the non-Store install lockdown must be opt-in (never in safe)
+    if ($safe.Name -match 'non-Store') {
+        Write-Log "FAIL: safe profile blocks non-Store installs" -Level Error; $ok = $false
+    }
+
+    # 4. SmartScreen must not be disabled (registry value absent from source)
+    if ((Get-Content -Path $optimizeFile -Raw) -match 'SmartScreenEnabled') {
+        Write-Log "FAIL: SmartScreenEnabled is still set by optimize" -Level Error; $ok = $false
+    }
+
+    if ($ok) { Write-Log "All optimize safety assertions passed" -Level Success }
+    return $ok
+}
+
+# Runtime assertions for `-Group restore`: after a restore run, the critical
+# services must not be Disabled and Game Bar capture must not be force-disabled.
+# Queries live state, so it reflects this machine (run it after restore).
+function Test-RestoreState {
+    Write-GroupHeader "RESTORE - State Assertions"
+    $ok = $true
+
+    foreach ($name in @('StorSvc', 'VSS', 'DPS', 'SysMain')) {
+        $svc = Get-Service -Name $name -ErrorAction SilentlyContinue
+        if (-not $svc) {
+            Write-Log "$name not present - skipped" -Level Skip
+            continue
+        }
+        if ($svc.StartType -eq 'Disabled') {
+            Write-Log "FAIL: $name is Disabled" -Level Error; $ok = $false
+        }
+        else {
+            Write-Log "$name StartType=$($svc.StartType)" -Level Success
+        }
+    }
+
+    $gdvr = Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -ErrorAction SilentlyContinue
+    if ($null -eq $gdvr) {
+        Write-Log "AllowGameDVR absent (Windows default)" -Level Success
+    }
+    elseif ($gdvr.AllowGameDVR -eq 1) {
+        Write-Log "AllowGameDVR = 1 (Game Bar capture enabled)" -Level Success
+    }
+    else {
+        Write-Log "FAIL: AllowGameDVR = $($gdvr.AllowGameDVR) (capture disabled)" -Level Error; $ok = $false
+    }
+
+    if ($ok) { Write-Log "All restore state assertions passed" -Level Success }
+    return $ok
+}
+
 Write-Host ""
 Write-Host "Program Installation Validator" -ForegroundColor Cyan
 Write-Host "===============================" -ForegroundColor Cyan
@@ -104,3 +189,19 @@ Write-Host "====================================================================
 Write-Host "  OVERALL: $($grandTotal.Total) checked | $($grandTotal.Installed) installed | $($grandTotal.NotInstalled) missing" -ForegroundColor Cyan
 Write-Host "=======================================================================" -ForegroundColor Cyan
 Write-Host ""
+
+# Run optimize safety assertions whenever optimize is in scope
+if ($groupsToValidate -contains "optimize") {
+    if (-not (Test-OptimizeSafety)) {
+        Write-Host ""
+        exit 1
+    }
+}
+
+# Run restore state assertions when restore is requested explicitly
+if ($groupsToValidate -contains "restore") {
+    if (-not (Test-RestoreState)) {
+        Write-Host ""
+        exit 1
+    }
+}

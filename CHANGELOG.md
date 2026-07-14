@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [0.7.0] - 2026-07-14
 
 ### Added
 
@@ -19,6 +19,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and/or Chocolatey — a workaround for a broken Microsoft Store, since winget's
   community source is independent of it. Supports `-Source winget|choco|all`,
   `-DryRun` (list only), and `-IncludeUnknown` (Store-registered apps).
+- **Restore capability** (`-Group restore`, `src/modules/restore.ps1`): reverses
+  the `optimize` changes — re-enables services (StorSvc, VSS, DPS, SysMain, WinRM)
+  to their Windows defaults and clears policy keys (Game Bar `AllowGameDVR`,
+  SmartScreen, the non-Store install lockdown, shadow copies). Idempotent, with a
+  `-WhatIf` preview; never runs in the default setup. Adds a `Remove-RegistryValue`
+  utility helper.
+- **Documentation**: explanatory `docs/OPTIMIZE.md` rewrite (per-tweak effect,
+  rationale, risk, honest reversibility), new `docs/SERVICES.md` (service reference
+  with factory defaults) and `docs/SYSTEM.md`, risk notes in `docs/CUSTOMIZE.md`,
+  `docs/STRUCTURE.md` updated, a README Documentation section, and refreshed Wiki
+  pages. Corrected the inaccurate "all reversible via Windows settings" claim.
+
+### Changed
+
+- **`optimize` is now safe by default** via `-Profile safe|desktop|gaming`
+  (cumulative). `safe` applies only reversible privacy, visual, storage and
+  harmless-service tweaks; `desktop` adds power/24-7 tweaks; `gaming` adds
+  network/latency tweaks and aggressive service disables. The module is now a
+  data-driven tweak table with a pure `Get-OptimizeTweaks` selector.
+
+### Fixed
+
+- **`optimize` no longer disables destructive settings by default**: removed
+  disabling of VSS/System Restore (#8), StorSvc/Microsoft Store (#9) and
+  SmartScreen (#11). DPS (#13), WinRM (#14) and the non-Store install lockdown
+  (#10, comment corrected) are now opt-in (gaming profile). `NetworkThrottlingIndex`
+  is written without DWORD overflow (#12), and the RAM check uses `Get-CimInstance`
+  so it no longer aborts on PowerShell 7.
 
 ---
 
@@ -329,6 +357,36 @@ Registro de todas as alterações notáveis deste projeto.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0.html).
+
+### 0.7.0 - 2026-07-14
+
+#### Adicionado
+
+- **Ferramenta de atualização** (`tools/update.ps1`): atualiza apps via winget
+  e/ou Chocolatey — solução para uma Microsoft Store quebrada, já que a fonte
+  community do winget é independente dela.
+- **Capacidade de restauração** (`-Group restore`, `src/modules/restore.ps1`):
+  reverte as mudanças do `optimize` — religa serviços (StorSvc, VSS, DPS, SysMain,
+  WinRM) aos padrões do Windows e limpa chaves de política (Game Bar `AllowGameDVR`,
+  SmartScreen, bloqueio de instalação fora da Store, shadow copies). Idempotente,
+  com prévia `-WhatIf`; nunca roda no setup padrão. Adiciona o utilitário
+  `Remove-RegistryValue`.
+
+#### Alterado
+
+- **`optimize` agora é seguro por padrão** via `-Profile safe|desktop|gaming`
+  (cumulativo). `safe` aplica apenas tweaks reversíveis de privacidade, visual,
+  armazenamento e serviços inofensivos; `desktop` adiciona energia/24-7; `gaming`
+  adiciona rede/latência e desabilitação agressiva de serviços.
+
+#### Corrigido
+
+- **`optimize` não desabilita mais configurações destrutivas por padrão**:
+  removida a desabilitação de VSS/Restauração do Sistema (#8), StorSvc/Microsoft
+  Store (#9) e SmartScreen (#11). DPS (#13), WinRM (#14) e o bloqueio de instalação
+  fora da Store (#10) agora são opt-in (perfil gaming). `NetworkThrottlingIndex`
+  é gravado sem overflow de DWORD (#12), e a verificação de RAM usa
+  `Get-CimInstance` (PowerShell 7).
 
 ### Versão Atual: v0.5.2
 
