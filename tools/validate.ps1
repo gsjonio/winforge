@@ -22,7 +22,7 @@
 
 param(
     [Parameter(Mandatory = $false)]
-    [ValidateSet("base", "dev", "gaming", "system", "optimize", "customize", "shell")]
+    [ValidateSet("base", "dev", "gaming", "system", "optimize", "customize", "shell", "restore")]
     [string]$Group,
 
     [switch]$ShowDetails
@@ -115,6 +115,42 @@ function Test-OptimizeSafety {
     return $ok
 }
 
+# Runtime assertions for `-Group restore`: after a restore run, the critical
+# services must not be Disabled and Game Bar capture must not be force-disabled.
+# Queries live state, so it reflects this machine (run it after restore).
+function Test-RestoreState {
+    Write-GroupHeader "RESTORE - State Assertions"
+    $ok = $true
+
+    foreach ($name in @('StorSvc', 'VSS', 'DPS', 'SysMain')) {
+        $svc = Get-Service -Name $name -ErrorAction SilentlyContinue
+        if (-not $svc) {
+            Write-Log "$name not present - skipped" -Level Skip
+            continue
+        }
+        if ($svc.StartType -eq 'Disabled') {
+            Write-Log "FAIL: $name is Disabled" -Level Error; $ok = $false
+        }
+        else {
+            Write-Log "$name StartType=$($svc.StartType)" -Level Success
+        }
+    }
+
+    $gdvr = Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -ErrorAction SilentlyContinue
+    if ($null -eq $gdvr) {
+        Write-Log "AllowGameDVR absent (Windows default)" -Level Success
+    }
+    elseif ($gdvr.AllowGameDVR -eq 1) {
+        Write-Log "AllowGameDVR = 1 (Game Bar capture enabled)" -Level Success
+    }
+    else {
+        Write-Log "FAIL: AllowGameDVR = $($gdvr.AllowGameDVR) (capture disabled)" -Level Error; $ok = $false
+    }
+
+    if ($ok) { Write-Log "All restore state assertions passed" -Level Success }
+    return $ok
+}
+
 Write-Host ""
 Write-Host "Program Installation Validator" -ForegroundColor Cyan
 Write-Host "===============================" -ForegroundColor Cyan
@@ -157,6 +193,14 @@ Write-Host ""
 # Run optimize safety assertions whenever optimize is in scope
 if ($groupsToValidate -contains "optimize") {
     if (-not (Test-OptimizeSafety)) {
+        Write-Host ""
+        exit 1
+    }
+}
+
+# Run restore state assertions when restore is requested explicitly
+if ($groupsToValidate -contains "restore") {
+    if (-not (Test-RestoreState)) {
         Write-Host ""
         exit 1
     }
