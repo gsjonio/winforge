@@ -51,12 +51,15 @@ Write-Host ""
 # Import and run analyzer
 Import-Module PSScriptAnalyzer -ErrorAction SilentlyContinue
 
+$settingsPath = Join-Path $PSScriptRoot "..\.pslintrc"
+
 $params = @{
     Path        = $Path
     Recurse     = $true
     Severity    = @($Severity, "Error") | Select-Object -Unique
     ErrorAction = "SilentlyContinue"
 }
+if (Test-Path -Path $settingsPath) { $params.Settings = $settingsPath }
 
 $results = Invoke-ScriptAnalyzer @params
 

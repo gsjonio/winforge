@@ -30,7 +30,7 @@ jobs:
       - name: Run linting
         shell: pwsh
         run: |
-          $results = Invoke-ScriptAnalyzer -Path "." -Recurse -Severity Error
+          $results = Invoke-ScriptAnalyzer -Path "." -Recurse -Settings ./.pslintrc -Severity Error
           if ($results) {
             Write-Host "Linting errors found:"
             $results | Format-Table -AutoSize
@@ -43,7 +43,7 @@ jobs:
         shell: pwsh
         continue-on-error: true
         run: |
-          $results = Invoke-ScriptAnalyzer -Path "." -Recurse -Severity Warning
+          $results = Invoke-ScriptAnalyzer -Path "." -Recurse -Settings ./.pslintrc -Severity Warning
           if ($results) {
             Write-Host "Warnings found:"
             $results | Format-Table -AutoSize
