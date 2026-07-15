@@ -1,118 +1,34 @@
-# PSScriptAnalyzer Configuration for Windows Setup Automation
+# PSScriptAnalyzer settings for winforge.
+# Applied via:  Invoke-ScriptAnalyzer -Path . -Recurse -Settings ./.pslintrc
+#
+# Only intentional, verified patterns are excluded — not real defects. Any new
+# rule violation outside this list still surfaces.
+@{
+    Severity     = @('Error', 'Warning')
 
-# Rules to enable (severity: Error, Warning, Information)
-Rules = @{
-    # Code style
-    PSUseConsistentIndentation = @{
-        Enable  = $true
-        Kind    = 'space'
-        PipelineIndentation = 'IncreaseIndentationForFirstPipeline'
-        IndentationSize = 4
-    }
+    ExcludeRules = @(
+        # Colored, timestamped console output IS the tool's UX (Write-Log /
+        # Write-GroupHeader and direct Write-Host in setup.ps1 / tools).
+        'PSAvoidUsingWriteHost',
 
-    PSUseConsistentWhitespace = @{
-        Enable = $true
-    }
+        # Group functions act on collections, so the plural is intentional, and
+        # setup.ps1 builds names dynamically as Install-<Group>Programs /
+        # Set-<Group>Configuration. Renaming to singular would be wrong and break
+        # dispatch.
+        'PSUseSingularNouns',
 
-    PSAlignAssignmentStatement = @{
-        Enable = $true
-    }
+        # Every state change routes through Invoke-SystemConfig, which supports
+        # ShouldProcess; -WhatIf is verified end-to-end across all groups. The
+        # orchestrators and the always-wrapped registry helpers therefore need no
+        # separate ShouldProcess plumbing.
+        'PSUseShouldProcessForStateChangingFunctions',
 
-    # Best practices
-    PSAvoidImplicitStringConversion = @{
-        Enable = $true
-    }
+        # winforge targets PowerShell 7 (UTF-8 by default); a BOM is unnecessary
+        # and adds churn/tooling friction.
+        'PSUseBOMForUnicodeEncodedFile',
 
-    PSUseApprovedVerbs = @{
-        Enable = $true
-    }
-
-    PSUseDeclaredVarsMoreThanAssignments = @{
-        Enable = $true
-    }
-
-    PSAvoidUsingCmdletAliases = @{
-        Enable = $false  # Allow aliases for brevity in some cases
-    }
-
-    # Performance
-    PSAvoidUsingInvokeExpression = @{
-        Enable = $true
-    }
-
-    # Security
-    PSAvoidUsingConvertToSecureStringWithPlainText = @{
-        Enable = $true
-    }
-
-    PSAvoidUsingUsernameAndPasswordParams = @{
-        Enable = $true
-    }
-
-    PSAvoidUsingPlainTextForPassword = @{
-        Enable = $true
-    }
-
-    PSAvoidUsingWildcardCharactersInFileNames = @{
-        Enable = $true
-    }
-
-    # Readability
-    PSAvoidUsingDoubleQuotedStrings = @{
-        Enable = $false  # Allow double quotes for readability
-    }
-
-    PSAvoidLongLines = @{
-        Enable = $true
-        MaximumLineLength = 120
-    }
-
-    PSAvoidUsingComputerNameHardcoded = @{
-        Enable = $true
-    }
-
-    PSAvoidGlobalAliases = @{
-        Enable = $true
-    }
-
-    PSAvoidGlobalFunctions = @{
-        Enable = $true
-    }
-
-    PSAvoidGlobalVariables = @{
-        Enable = $true
-    }
-
-    PSAvoidShouldContinueWithoutForce = @{
-        Enable = $true
-    }
-
-    PSAvoidUsingWriteHost = @{
-        Enable = $false  # Allow Write-Host for logging output
-    }
-
-    PSProvideCommentHelp = @{
-        Enable = $false  # Optional; we have ARCHITECTURE.md
-    }
+        # Write-Log is winforge's own logger; there is no runtime conflict in the
+        # tool's own session.
+        'PSAvoidOverwritingBuiltInCmdlets'
+    )
 }
-
-# Rules to exclude
-ExcludeRules = @(
-    'PSAvoidUsingDoubleQuotedStrings',
-    'PSAvoidWriteHost',
-    'PSProvideCommentHelp'
-)
-
-# Files to include
-Include = @(
-    '*.ps1',
-    '*.psm1'
-)
-
-# Files to exclude
-Exclude = @(
-    'tests/*'
-)
-
-# Recursive analysis
-Recurse = $true

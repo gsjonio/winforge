@@ -11,6 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.2] - 2026-07-15
+
+### Changed
+
+- Replaced `.pslintrc` with a valid PSScriptAnalyzer settings file and wired it
+  into `tools/lint.ps1` and the CI lint workflow via `-Settings`, so the lint run
+  is clean of intentional-pattern warnings (Write-Host logging, plural
+  group-function nouns, delegated ShouldProcess, no-BOM UTF-8, Write-Log). Any new
+  violation outside that list still surfaces.
+
+### Fixed
+
+- The release workflow now extracts the actual CHANGELOG section for the tag's
+  version (instead of falling back to a generic "See CHANGELOG.md") and passes the
+  version via `env` rather than interpolating it into the shell.
+
+---
+
 ## [0.8.1] - 2026-07-15
 
 ### Added
@@ -411,6 +429,24 @@ Registro de todas as alterações notáveis deste projeto.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0.html).
+
+### 0.8.2 - 2026-07-15
+
+#### Alterado
+
+- `.pslintrc` substituída por um settings file válido do PSScriptAnalyzer e ligada
+  ao `tools/lint.ps1` e ao workflow de lint do CI via `-Settings`, deixando o lint
+  limpo dos warnings de padrões intencionais (log via Write-Host, nomes plurais de
+  funções de grupo, ShouldProcess delegado, UTF-8 sem BOM, Write-Log). Qualquer
+  violação nova fora dessa lista ainda aparece.
+
+#### Corrigido
+
+- O workflow de release agora extrai a seção real do CHANGELOG da versão da tag
+  (em vez de cair no genérico "See CHANGELOG.md") e passa a versão via `env` em vez
+  de interpolar no shell.
+
+---
 
 ### 0.8.1 - 2026-07-15
 
