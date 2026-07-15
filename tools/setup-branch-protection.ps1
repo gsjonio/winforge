@@ -30,7 +30,7 @@ Write-Host ""
 
 # Check authentication
 Write-Host "Checking GitHub authentication..." -ForegroundColor Yellow
-$auth = gh auth status 2>&1
+gh auth status 2>&1 | Out-Null
 if ($LASTEXITCODE -ne 0) {
     Write-Host "✗ Not authenticated with GitHub" -ForegroundColor Red
     Write-Host "  Run: gh auth login" -ForegroundColor Gray

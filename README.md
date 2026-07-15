@@ -1,4 +1,4 @@
-# Windows Post-Format Automation Setup
+# winforge — Windows Post-Format Automation
 
 [![PowerShell 7+](https://img.shields.io/badge/PowerShell-7.0%2B-blue)](https://github.com/PowerShell/PowerShell)
 [![Release: v0.7.1](https://img.shields.io/badge/release-v0.7.1-blue)](https://github.com/gsjonio/winforge/releases/tag/v0.7.1)
@@ -6,380 +6,318 @@
 [![Docs: EN/PT-BR](https://img.shields.io/badge/docs-EN%2FPT--BR-orange)](README.md)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-gugamenezes-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/gugamenezes)
 
-🇺🇸 English
+**[English](#english) · [Português](#português)**
 
-**winforge**: *Automate Windows post-format setup & system optimization.*
+---
 
-A modular PowerShell 7+ framework for configuring Windows after clean install:
-program installation (15+ apps across 7 groups), system optimization (42+
-registry/service tweaks), UI customization, and shell enhancement with Oh My
-Posh. Smart idempotent detection, multi-method install fallback (Winget →
-Chocolatey → custom URL), and production-ready with MIT license.
+## English
 
-## Table of Contents
+winforge is a modular PowerShell 7+ framework for setting up Windows right after a
+clean install. It installs your programs (multi-method fallback: winget →
+Chocolatey → custom URL), applies privacy/performance tweaks, customizes the UI,
+and enhances the shell — organized into groups so you run only what you want.
+Detection is idempotent (re-running is safe), and the `optimize` group is **safe
+by default** with an explicit escape hatch (`restore`) to undo its changes.
 
-- [Features](#features)
-- [Install](#install)
-- [Architecture](#architecture)
-- [Usage](#usage)
-- [Optimization Details](#optimization-details)
-- [Windows 11 Native `sudo`](#windows-11-native-sudo)
-- [Shell Enhancement](#shell-enhancement)
-- [Notes](#notes)
-- [Support](#support)
-- [Contributing](#contributing)
-- [License](#license)
+### Requirements
 
-## Features
+- **PowerShell 7.0+** — [download](https://github.com/PowerShell/PowerShell/releases)
+- **Windows 10 or 11**
+- **Administrator** — required for most groups (services, registry, fonts, power plan)
+- **winget** — built-in on Windows 11; install "App Installer" from the Store on Windows 10
 
-**Installation.** 15 programs organized in 7 modular groups (base, dev, gaming,
-system, optimize, customize, shell). Smart detection with 4 methods (executable,
-package manager, winget, registry), idempotent (safe to run multiple times),
-and 3-method fallback chain (Winget → Chocolatey → custom URL) for max success.
-
-**System Optimization.** Safe by default. A `-Profile` (safe / desktop / gaming,
-cumulative) controls how aggressive it gets: `safe` applies only reversible
-privacy, visual, storage (TRIM, Storage Sense) and harmless-service tweaks;
-`desktop` adds power/24-7 tweaks; `gaming` adds network/latency tweaks and
-aggressive service disables (SysMain, DPS, WinRM). It never disables VSS/System
-Restore, StorSvc (Microsoft Store), or SmartScreen.
-
-**UI Customization.** 18+ Windows Explorer and shell tweaks: dark mode, hidden
-files, file extensions visible, context menu cleanup, taskbar optimization,
-Start Menu customization, shortcut arrow removal, mouse settings.
-
-**Shell Enhancement.** PowerShell 7.6.2 with Oh My Posh (half-life game-inspired
-theme), Fira Code font (ligature support), PSReadLine (history search, autocomplete),
-and bash-like aliases (ll, la, grep).
-
-**Code Quality.** PSScriptAnalyzer linting, semantic versioning with microcommits,
-GitHub Actions CI/CD (lint, validate, security, documentation), and branch
-protection rulesets.
-
-**Bilingual.** Full EN/PT-BR documentation for docs and changelog.
-
-## Install
-
-### Prerequisites
-
-- PowerShell 7.0+ ([download](https://github.com/PowerShell/PowerShell/releases))
-- Windows 10/11 with administrator access
-- winget (built-in on Windows 11, Windows App Installer on Windows 10)
-
-### Quick start
-
-Clone and run with admin:
+### Install / quick start
 
 ```powershell
 git clone https://github.com/gsjonio/winforge.git
 cd winforge
-sudo .\setup.ps1
+sudo .\setup.ps1            # all groups (except restore)
 ```
 
-Or run a specific group:
+No `sudo`? Use the fallback launcher:
 
 ```powershell
-sudo .\setup.ps1 -Group shell      # Just shell enhancement
-sudo .\setup.ps1 -Group optimize   # Just system optimizations
-```
-
-### Privileges by command
-
-| Command | Privilege | Notes |
-| --- | --- | --- |
-| `setup.ps1` (all groups) | Admin | Services, registry, fonts, power plan |
-| `setup.ps1 -Group base/dev/gaming/system` | Admin | Program installation |
-| `setup.ps1 -Group optimize/customize/shell` | Admin | Registry, services, fonts |
-| `.\tools\lint.ps1` | None | Code quality check |
-| `.\tools\validate.ps1` | None | Installation verification |
-| `.\tools\update.ps1` | Admin (recommended) | Update installed apps (winget/choco) |
-
-Windows 11 users: enable native `sudo` in Settings → System → For developers
-→ Terminal → "Enable sudo" to avoid UAC prompts. See [Windows 11 Native
-`sudo`](#windows-11-native-sudo) below.
-
-### Build from source
-
-If you want to modify or inspect the code:
-
-```powershell
-git clone https://github.com/gsjonio/winforge.git
-cd winforge
-
-# Lint all PowerShell
-.\tools\lint.ps1
-
-# Validate scripts
-.\tools\validate.ps1
-
-# Run setup
-sudo .\setup.ps1
-```
-
-## Architecture
-
-**Organized by responsibility** — each layer has one job:
-
-```text
-setup.ps1 (entry point)
-  ├─ src/utils/
-  │  ├─ Logging.ps1         Color-coded log output (5 severity levels)
-  │  ├─ System.ps1          UAC elevation, admin checks
-  │  ├─ Validation.ps1      Program detection (4 methods)
-  │  └─ Registry.ps1        Registry operations with path creation
-  ├─ src/core/
-  │  └─ Installation.ps1    Install-Program, 3-method fallback
-  └─ src/modules/           Group handlers
-     ├─ base.ps1           5 essential programs
-     ├─ dev.ps1            4 dev tools
-     ├─ gaming.ps1         2 gaming apps
-     ├─ system.ps1         4 system utilities
-     ├─ optimize.ps1       42 system tweaks
-     ├─ customize.ps1      18 UI customizations
-     └─ shell.ps1          Oh My Posh + Fira Code
-```
-
-See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for full breakdown.
-
-## Usage
-
-### Run all groups
-
-```powershell
-# Windows 11 with sudo enabled
-sudo .\setup.ps1
-
-# Or fallback
 powershell -NoProfile -ExecutionPolicy Bypass -File ".\setup.ps1"
 ```
 
-### Run specific group
+### Command reference
+
+`setup.ps1` parameters (from the `param()` block in [setup.ps1](setup.ps1)):
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| `-Group` | `string` (ValidateSet: `base`, `dev`, `gaming`, `system`, `optimize`, `customize`, `shell`, `restore`) | *(all except `restore`)* | Run a single group. Omit to run every group except `restore`. |
+| `-Profile` | `string` (ValidateSet: `safe`, `desktop`, `gaming`) | `safe` | Aggressiveness of the `optimize` group. Ignored by other groups. |
+| `-SkipElevation` | `switch` | off | Skip the admin check (for testing in the current session). |
+| `-WhatIf` | `switch` | off | Preview state-changing actions without applying them (supported by `restore`). |
+
+**Groups:**
+
+| Group | What it does |
+| --- | --- |
+| `base` | Firefox, Git, VLC, WinRAR, LibreOffice |
+| `dev` | VS Code, GitHub Desktop, Claude, Python |
+| `gaming` | Steam, Discord |
+| `system` | NVIDIA App, AMD Radeon Software, CPU-Z, HWMonitor |
+| `optimize` | Privacy + performance tweaks (safe by default; see `-Profile`) |
+| `customize` | Windows Explorer / shell UI tweaks |
+| `shell` | Oh My Posh (half-life theme) + Fira Code + PSReadLine |
+| `restore` | Reverse `optimize`'s changes to Windows defaults (explicit-only) |
+
+**`optimize` profiles** are cumulative — `safe ⊂ desktop ⊂ gaming`:
+
+- `safe` — reversible privacy, visual, storage and low-impact service tweaks.
+- `desktop` — adds power / 24-7 tweaks (High Performance, no sleep/hibernate).
+- `gaming` — adds network/latency tweaks and aggressive service disables (SysMain, DPS, WinRM).
+
+It **never** disables VSS/System Restore, StorSvc (Microsoft Store) or SmartScreen.
+
+### Configuration reference
+
+winforge has **no external config file**. Configuration is in-code: each program
+is a hashtable in its group module under `src/modules/`, consumed by
+`Install-Program` ([src/core/Installation.ps1](src/core/Installation.ps1)).
+
+| Key | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `Name` | string | yes | — | Display name; used for detection and logging. |
+| `WingetId` | string | yes | — | winget package id (primary install method). |
+| `ChocoId` | string | no | *(none)* | Chocolatey package id (fallback if winget fails). |
+| `Executable` | string | no | *(none)* | Command probed on PATH for idempotent detection. |
+| `InstallerUrl` | string | no | *(none)* | Direct installer URL (last-resort fallback, run silently with `/S`). |
+
+Example — add a program to a group:
 
 ```powershell
-sudo .\setup.ps1 -Group base       # Install 5 essential programs
-sudo .\setup.ps1 -Group optimize   # Apply 42 system optimizations
-sudo .\setup.ps1 -Group shell      # Install Oh My Posh + Fira Code
+# in src/modules/dev.ps1, inside the $programs array
+@{
+    Name       = "Node.js"
+    WingetId   = "OpenJS.NodeJS.LTS"
+    ChocoId    = "nodejs-lts"   # optional
+    Executable = "node"          # optional, enables skip-if-installed
+}
 ```
 
-### Available groups
+The `optimize` group is configured differently: it is a data-driven tweak table
+in [src/modules/optimize.ps1](src/modules/optimize.ps1), where each tweak is
+tagged with a tier (`safe`/`desktop`/`gaming`) and selected by `-Profile` via the
+pure `Get-OptimizeTweaks` function.
 
-| Group | What | Programs/Tweaks |
-| --- | --- | --- |
-| **base** | Essential programs | Firefox, Git, VLC, WinRAR, LibreOffice (5) |
-| **dev** | Development tools | VS Code, GitHub Desktop, Claude, Python (4) |
-| **gaming** | Gaming apps | Steam, Discord (2) |
-| **system** | System utilities | NVIDIA App, AMD Radeon, CPU-Z, HWMonitor (4) |
-| **optimize** | System tweaks | 42 optimizations (services, power, network, storage) |
-| **customize** | UI customizations | 18 Windows/shell tweaks |
-| **shell** | Terminal enhancement | Oh My Posh (half-life theme) + Fira Code |
-| **restore** | Undo winforge changes | Reverts services + policy keys to Windows defaults — explicit-only, supports `-WhatIf` |
-
-> **Safety.** `optimize` changes system services and policies. Read
-> [docs/OPTIMIZE.md](docs/OPTIMIZE.md) first, and use
-> [docs/RESTORE.md](docs/RESTORE.md) (`-Group restore`) to reverse them.
-
-### Code quality
+### Usage examples
 
 ```powershell
-# Lint all PowerShell scripts
-.\tools\lint.ps1
+# Minimal — just install the essentials
+sudo .\setup.ps1 -Group base
 
-# Lint specific directory
-.\tools\lint.ps1 -Path .\src
+# Realistic — a dev + gaming desktop, more aggressive optimization
+sudo .\setup.ps1 -Group dev
+sudo .\setup.ps1 -Group optimize -Profile desktop
+sudo .\setup.ps1 -Group shell
 
-# Show errors only
-.\tools\lint.ps1 -Severity Error
-```
+# Check what is already installed, without installing anything
+.\tools\validate.ps1 -Group dev -ShowDetails
 
-### Validation
-
-```powershell
-# Check installation status of all programs
-.\tools\validate.ps1
-
-# Verify what's installed
-Get-Package | Where-Object { $_.Name -like "*firefox*" }
-```
-
-### Update apps
-
-Update installed applications through winget/Chocolatey — works even when the
-Microsoft Store is broken, since winget's community source is independent of it.
-
-```powershell
-# Show what would be updated (no changes)
+# Update installed apps (works even if the Microsoft Store is broken)
 .\tools\update.ps1 -DryRun
-
-# Update everything (run as admin for machine-wide apps)
 sudo .\tools\update.ps1
 
-# winget only, including Store-registered apps with unknown versions
-.\tools\update.ps1 -Source winget -IncludeUnknown
-```
-
-### Restore (undo winforge)
-
-Reverse the `optimize` changes — re-enable services (StorSvc, VSS, DPS, SysMain,
-WinRM) and clear policy keys (Game Bar capture, SmartScreen, non-Store lockdown,
-shadow copies). Never runs in the default setup. See [docs/RESTORE.md](docs/RESTORE.md).
-
-```powershell
-# Preview, change nothing
+# Undo optimize's changes — preview first, then apply
 .\setup.ps1 -Group restore -WhatIf
-
-# Apply (as admin)
 sudo .\setup.ps1 -Group restore
 ```
 
-## Optimization Details
+### Safety
 
-### What gets optimized
+- **What it changes.** Program installs; registry values (privacy, UI, policies);
+  Windows services (disable a subset); power plan and Storage Sense. See
+  [docs/OPTIMIZE.md](docs/OPTIMIZE.md) and [docs/SERVICES.md](docs/SERVICES.md)
+  for the exact keys/services and their risk.
+- **Idempotent.** Every install checks current state first; registry writes are
+  deterministic. Re-running is safe.
+- **Reversible, but not all via Settings.** Visual/per-user tweaks revert through
+  Windows Settings; HKLM policy keys and disabled services do not — use
+  `-Group restore` (see [docs/RESTORE.md](docs/RESTORE.md)). `restore` supports
+  `-WhatIf` to preview.
+- **Elevation** is checked explicitly; without admin, winforge warns and (in a
+  non-interactive shell) continues, skipping steps that need it.
 
-**Profiles.** `optimize` is safe by default; `-Profile safe|desktop|gaming`
-(cumulative) controls scope:
+### Documentation
 
-```powershell
-.\setup.ps1 -Group optimize                  # safe (default)
-.\setup.ps1 -Group optimize -Profile gaming   # everything
-```
+The **[Wiki](https://github.com/gsjonio/winforge/wiki)** is the narrative layer;
+`docs/` is the reference layer:
+[OPTIMIZE](docs/OPTIMIZE.md) ·
+[SERVICES](docs/SERVICES.md) ·
+[RESTORE](docs/RESTORE.md) ·
+[CUSTOMIZE](docs/CUSTOMIZE.md) ·
+[SYSTEM](docs/SYSTEM.md) ·
+[SHELL](docs/SHELL.md) ·
+[ARCHITECTURE](docs/ARCHITECTURE.md) ·
+[STRUCTURE](docs/STRUCTURE.md).
 
-**Services disabled (safe):**
-DiagTrack, dmwappushservice, OneSyncSvc, HvHost, SharedAccess, CscService,
-TabletInputService, TrkWks, stisvc, WMPNetworkSvc, lfsvc. The `gaming` profile
-additionally disables SysMain, DPS and WinRM. **StorSvc, VSS and SmartScreen are
-never disabled** (they broke real machines).
+### Contributing
 
-**Power & Performance:**
+Git-flow: `main` is protected (PR-only), work off `develop`. See
+[CONTRIBUTING.md](CONTRIBUTING.md). Conventional commits; PSScriptAnalyzer runs in
+CI. A code-quality audit lives in [REFACTOR.md](REFACTOR.md).
 
-- High Performance power plan (forced)
-- Sleep/Hibernation disabled (PC always active)
-- USB Selective Suspend disabled (instant peripheral response)
-- Network Throttling removed (faster updates)
-- QoS Throttling disabled (full bandwidth for all apps)
+### License & status
 
-**Storage:**
+MIT ([LICENSE](LICENSE)). **Status:** active — current release **v0.7.1**.
+If winforge saves you time, you can [buy me a coffee](https://buymeacoffee.com/gugamenezes).
 
-- Automatic TRIM enabled for SSDs
-- Storage Sense configured (auto temp cleanup)
-- VSS / System Restore left intact (never disabled)
+---
 
-**Visual:**
+## Português
 
-- Animations and transitions disabled
-- Window transparency/blur removed
-- Tooltip animations disabled
-- Dark mode enabled
+winforge é um framework modular em PowerShell 7+ para configurar o Windows logo
+após uma instalação limpa. Ele instala seus programas (fallback multi-método:
+winget → Chocolatey → URL customizada), aplica ajustes de privacidade/desempenho,
+customiza a UI e melhora o shell — organizado em grupos para você rodar só o que
+quer. A detecção é idempotente (reexecutar é seguro), e o grupo `optimize` é
+**seguro por padrão**, com uma saída de emergência (`restore`) para desfazer.
 
-**UI Customization (18 tweaks):**
-File Explorer (hidden files, extensions, full path), context menu cleanup, taskbar
-optimization, Start Menu customization, keyboard/mouse settings.
+### Requisitos
 
-### Is it reversible?
+- **PowerShell 7.0+** — [download](https://github.com/PowerShell/PowerShell/releases)
+- **Windows 10 ou 11**
+- **Administrador** — necessário na maioria dos grupos (serviços, registro, fontes, plano de energia)
+- **winget** — nativo no Windows 11; instale o "Instalador de Aplicativo" pela Store no Windows 10
 
-Yes — all changes use standard Windows registry/services/settings. Reverse any
-tweak via Settings, Services.msc, Registry Editor, or GPEdit. Most come with
-undo instructions in [`docs/OPTIMIZE.md`](docs/OPTIMIZE.md).
-
-## Windows 11 Native `sudo`
-
-Windows 11 22H2+ includes native `sudo` — no need for `Start-Process -Verb RunAs`.
-
-**Enable it:**
-
-1. Open **Settings** → **System** → **For developers**
-2. Scroll to **Terminal** section
-3. Toggle **"Enable sudo"** ON
-
-**Use it:**
+### Instalação / início rápido
 
 ```powershell
-sudo .\setup.ps1
-sudo .\setup.ps1 -Group shell
-sudo Get-Process
+git clone https://github.com/gsjonio/winforge.git
+cd winforge
+sudo .\setup.ps1            # todos os grupos (exceto restore)
 ```
 
-Mimics Linux/macOS behavior; no UAC prompt on every admin command.
-
-## Shell Enhancement
-
-The **shell** group installs:
-
-- **Oh My Posh 29.18.0** with half-life game-inspired theme (custom segments:
-  user, path, git branch, timestamp)
-- **Fira Code font** (7 variants, perfect ligature rendering)
-- **PSReadLine** (history search with Ctrl+R/Ctrl+S, autocomplete)
-- **Bash-like aliases**: `ll` (list), `la` (list all), `grep` (search)
-- **Keyboard shortcuts**: Ctrl+A (line start), Ctrl+E (line end), word jump
-
-Install with:
+Sem `sudo`? Use o lançador alternativo:
 
 ```powershell
-sudo .\setup.ps1 -Group shell
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\setup.ps1"
 ```
 
-Then open a new PowerShell 7.6.2 window to see the enhanced prompt.
+### Referência de comandos
 
-Change themes: Edit `$env:APPDATA\oh-my-posh\config.json`. 100+ themes at
-[ohmyposh.dev/docs/themes](https://ohmyposh.dev/docs/themes).
+Parâmetros do `setup.ps1` (do bloco `param()` em [setup.ps1](setup.ps1)):
 
-## Notes
+| Parâmetro | Tipo | Padrão | Descrição |
+| --- | --- | --- | --- |
+| `-Group` | `string` (ValidateSet: `base`, `dev`, `gaming`, `system`, `optimize`, `customize`, `shell`, `restore`) | *(todos exceto `restore`)* | Roda um único grupo. Omita para rodar todos exceto `restore`. |
+| `-Profile` | `string` (ValidateSet: `safe`, `desktop`, `gaming`) | `safe` | Agressividade do grupo `optimize`. Ignorado pelos outros grupos. |
+| `-SkipElevation` | `switch` | desligado | Pula a checagem de admin (para testes na sessão atual). |
+| `-WhatIf` | `switch` | desligado | Prévia das ações que alteram estado, sem aplicá-las (suportado pelo `restore`). |
 
-### Installation success rates
+**Grupos:**
 
-| Method | Success |
+| Grupo | O que faz |
 | --- | --- |
-| Winget only | ~70% |
-| Winget + Chocolatey | ~95% |
-| All 3 (+ custom URL) | ~99% |
+| `base` | Firefox, Git, VLC, WinRAR, LibreOffice |
+| `dev` | VS Code, GitHub Desktop, Claude, Python |
+| `gaming` | Steam, Discord |
+| `system` | NVIDIA App, AMD Radeon Software, CPU-Z, HWMonitor |
+| `optimize` | Ajustes de privacidade + desempenho (seguro por padrão; veja `-Profile`) |
+| `customize` | Ajustes de UI do Explorer / shell |
+| `shell` | Oh My Posh (tema half-life) + Fira Code + PSReadLine |
+| `restore` | Reverte as mudanças do `optimize` aos padrões do Windows (apenas explícito) |
 
-### Platform support
+**Perfis do `optimize`** são cumulativos — `safe ⊂ desktop ⊂ gaming`:
 
-- **Windows** is primary and fully tested (10/11, both 64-bit)
-- **Linux** (WSL2) partially supported for some commands
-- Requires PowerShell 7.0+ (works with 5.1 but not all features)
+- `safe` — ajustes reversíveis de privacidade, visual, armazenamento e serviços de baixo impacto.
+- `desktop` — adiciona energia / 24-7 (Alto Desempenho, sem suspensão/hibernação).
+- `gaming` — adiciona rede/latência e desabilitação agressiva de serviços (SysMain, DPS, WinRM).
 
-### About the code
+Ele **nunca** desabilita VSS/Restauração do Sistema, StorSvc (Microsoft Store) ou SmartScreen.
 
-- **60+ commits** with conventional messages (feat, fix, docs, chore)
-- **Semantic versioning** (MAJOR.MINOR.PATCH)
-- **GitHub Actions** (6 workflows) for lint, validate, security, release
-- **PSScriptAnalyzer** configured in `.pslintrc` for code quality
-- **MIT licensed** — free to use, modify, distribute
+### Referência de configuração
 
-## Documentation
+O winforge **não tem arquivo de config externo**. A configuração é no código: cada
+programa é um hashtable no módulo do grupo em `src/modules/`, consumido pelo
+`Install-Program` ([src/core/Installation.ps1](src/core/Installation.ps1)).
 
-Two layers: the **[Wiki](https://github.com/gsjonio/winforge/wiki)** is the
-narrative/onboarding layer; **`docs/`** is the reference layer.
+| Chave | Tipo | Obrigatório | Padrão | Descrição |
+| --- | --- | --- | --- | --- |
+| `Name` | string | sim | — | Nome de exibição; usado na detecção e nos logs. |
+| `WingetId` | string | sim | — | Id do pacote winget (método principal). |
+| `ChocoId` | string | não | *(nenhum)* | Id do pacote Chocolatey (fallback se o winget falhar). |
+| `Executable` | string | não | *(nenhum)* | Comando procurado no PATH para detecção idempotente. |
+| `InstallerUrl` | string | não | *(nenhum)* | URL direta do instalador (último recurso, silencioso com `/S`). |
 
-- **[OPTIMIZE.md](docs/OPTIMIZE.md)** — every tweak explained (effect, risk, reversibility)
-- **[SERVICES.md](docs/SERVICES.md)** — every service touched + factory defaults
-- **[RESTORE.md](docs/RESTORE.md)** — reverse winforge's changes (`-Group restore`)
-- **[CUSTOMIZE.md](docs/CUSTOMIZE.md)** — UI changes explained
-- **[SYSTEM.md](docs/SYSTEM.md)** — system group utilities
-- **[SHELL.md](docs/SHELL.md)** — Oh My Posh & Fira Code setup
-- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** — project structure & design
-- **[STRUCTURE.md](docs/STRUCTURE.md)** — file / function map
-- **[ADMIN-PRIVILEGES.md](docs/ADMIN-PRIVILEGES.md)** — 4 ways to elevate
-- **[EXAMPLES.md](docs/EXAMPLES.md)** — how to add programs
-- **[VALIDATION.md](docs/VALIDATION.md)** — installation checks
-- **[CHANGELOG.md](CHANGELOG.md)** — version history (EN & PT-BR)
+Exemplo — adicionar um programa a um grupo:
 
-> ⚠️ **Safety.** `optimize` changes system services and policies. It is safe by
-> default; read [OPTIMIZE.md](docs/OPTIMIZE.md) and [SERVICES.md](docs/SERVICES.md)
-> first, and use [RESTORE.md](docs/RESTORE.md) to reverse anything.
+```powershell
+# em src/modules/dev.ps1, dentro do array $programs
+@{
+    Name       = "Node.js"
+    WingetId   = "OpenJS.NodeJS.LTS"
+    ChocoId    = "nodejs-lts"   # opcional
+    Executable = "node"          # opcional, habilita pular-se-instalado
+}
+```
 
-## Support
+O grupo `optimize` é configurado de outra forma: é uma tabela de tweaks orientada
+a dados em [src/modules/optimize.ps1](src/modules/optimize.ps1), onde cada tweak
+tem um nível (`safe`/`desktop`/`gaming`) e é selecionado por `-Profile` via a
+função pura `Get-OptimizeTweaks`.
 
-This project is free and open source. If it saves you setup time, you can
-support development:
+### Exemplos de uso
 
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-gugamenezes-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/gugamenezes)
+```powershell
+# Mínimo — só instalar o essencial
+sudo .\setup.ps1 -Group base
 
-## Contributing
+# Realista — desktop de dev + jogos, otimização mais agressiva
+sudo .\setup.ps1 -Group dev
+sudo .\setup.ps1 -Group optimize -Profile desktop
+sudo .\setup.ps1 -Group shell
 
-Want to contribute? See [CONTRIBUTING.md](CONTRIBUTING.md). This project follows
-the [Code of Conduct](CODE_OF_CONDUCT.md).
+# Verificar o que já está instalado, sem instalar nada
+.\tools\validate.ps1 -Group dev -ShowDetails
 
-## License
+# Atualizar apps instalados (funciona mesmo com a Microsoft Store quebrada)
+.\tools\update.ps1 -DryRun
+sudo .\tools\update.ps1
 
-[MIT](LICENSE)
+# Desfazer as mudanças do optimize — prévia primeiro, depois aplicar
+.\setup.ps1 -Group restore -WhatIf
+sudo .\setup.ps1 -Group restore
+```
+
+### Segurança
+
+- **O que muda.** Instalação de programas; valores de registro (privacidade, UI,
+  políticas); serviços do Windows (desabilita um subconjunto); plano de energia e
+  Sensor de Armazenamento. Veja [docs/OPTIMIZE.md](docs/OPTIMIZE.md) e
+  [docs/SERVICES.md](docs/SERVICES.md) para as chaves/serviços exatos e o risco.
+- **Idempotente.** Toda instalação verifica o estado atual antes; escritas de
+  registro são determinísticas. Reexecutar é seguro.
+- **Reversível, mas não tudo via Configurações.** Ajustes visuais/por usuário
+  voltam pelas Configurações do Windows; chaves de política HKLM e serviços
+  desabilitados não — use `-Group restore` (veja [docs/RESTORE.md](docs/RESTORE.md)).
+  O `restore` suporta `-WhatIf` para prévia.
+- **Elevação** é checada explicitamente; sem admin, o winforge avisa e (num shell
+  não-interativo) continua, pulando os passos que exigem admin.
+
+### Documentação
+
+A **[Wiki](https://github.com/gsjonio/winforge/wiki)** é a camada narrativa;
+`docs/` é a camada de referência:
+[OPTIMIZE](docs/OPTIMIZE.md) ·
+[SERVICES](docs/SERVICES.md) ·
+[RESTORE](docs/RESTORE.md) ·
+[CUSTOMIZE](docs/CUSTOMIZE.md) ·
+[SYSTEM](docs/SYSTEM.md) ·
+[SHELL](docs/SHELL.md) ·
+[ARCHITECTURE](docs/ARCHITECTURE.md) ·
+[STRUCTURE](docs/STRUCTURE.md).
+
+### Contribuindo
+
+Git-flow: a `main` é protegida (só via PR), trabalhe a partir da `develop`. Veja
+[CONTRIBUTING.md](CONTRIBUTING.md). Conventional commits; o PSScriptAnalyzer roda
+no CI. A auditoria de qualidade está em [REFACTOR.md](REFACTOR.md).
+
+### Licença & status
+
+MIT ([LICENSE](LICENSE)). **Status:** ativo — release atual **v0.7.1**.
+Se o winforge te economiza tempo, você pode [me pagar um café](https://buymeacoffee.com/gugamenezes).
