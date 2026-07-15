@@ -23,20 +23,13 @@
 | ------ | ----------- | --------- |
 | `Logging.ps1` | `Write-Log()` | Timestamped colored log output |
 | | `Write-GroupHeader()` | Format group section headers |
-| | `Write-Section()` | Generic section headers |
 | `Validation.ps1` | `Test-ProgramInstalled()` | Quick check: is program installed? |
 | | `Get-InstallationStatus()` | Detailed status with detection method |
 | | `Show-InstallationReport()` | Visual report for multiple programs |
 | `Registry.ps1` | `Set-RegistryValue()` | Set registry entries (creates paths) |
 | | `Remove-RegistryValue()` | Remove a value (fall back to Windows default) |
-| | `Get-RegistryValue()` | Read registry entries |
-| | `Enable-Feature()` | Enable Windows optional feature |
-| | `Disable-Feature()` | Disable Windows optional feature |
-| | `Set-FileAssociation()` | Configure file type associations |
 | `System.ps1` | `Test-IsElevated()` | Check admin privileges |
 | | `Request-Elevation()` | Request UAC elevation |
-| | `Wait-ProcessExit()` | Wait for process completion |
-| | `Get-InstalledPrograms()` | List all installed packages |
 
 ### Installation Modules (`src/modules/`)
 

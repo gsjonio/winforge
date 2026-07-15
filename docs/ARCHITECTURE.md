@@ -14,10 +14,10 @@ win-setup/
 │   │   └── Configuration.ps1    # (Reserved) System configuration
 │   │
 │   ├── utils/                   # Utility functions
-│   │   ├── Logging.ps1          # Write-Log, Write-GroupHeader, Write-Section
+│   │   ├── Logging.ps1          # Write-Log, Write-GroupHeader
 │   │   ├── Validation.ps1       # Test-ProgramInstalled, Get-InstallationStatus, Show-InstallationReport
-│   │   ├── Registry.ps1         # Set-RegistryValue, Get-RegistryValue, Enable-Feature, Disable-Feature
-│   │   └── System.ps1           # Test-IsElevated, Request-Elevation, Wait-ProcessExit
+│   │   ├── Registry.ps1         # Set-RegistryValue, Remove-RegistryValue
+│   │   └── System.ps1           # Test-IsElevated, Request-Elevation
 │   │
 │   └── modules/                 # Installation groups (PowerShell Modules)
 │       ├── base.psm1            # Essential programs & configuration
@@ -64,7 +64,6 @@ win-setup/
 - **Logging.ps1** - Output formatting
   - `Write-Log()` - Timestamped colored log messages
   - `Write-GroupHeader()` - Format group section headers
-  - `Write-Section()` - Generic section headers
 
 - **Validation.ps1** - Installation detection
   - `Test-ProgramInstalled()` - Quick boolean check (4 detection methods)
@@ -74,14 +73,10 @@ win-setup/
 - **System.ps1** - System operations
   - `Test-IsElevated()` - Check admin privileges
   - `Request-Elevation()` - Request UAC elevation
-  - `Wait-ProcessExit()` - Wait for process completion
-  - `Get-InstalledPrograms()` - List all installed packages
 
 - **Registry.ps1** - Windows registry operations
   - `Set-RegistryValue()` - Set registry entries (creates paths)
-  - `Get-RegistryValue()` - Read registry entries
-  - `Enable-Feature()` / `Disable-Feature()` - Windows optional features
-  - `Set-FileAssociation()` - Configure file type associations
+  - `Remove-RegistryValue()` - Remove a value (fall back to Windows default)
 
 ### `src/modules/`
 
