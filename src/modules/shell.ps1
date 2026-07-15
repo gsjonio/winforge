@@ -38,6 +38,8 @@ function Set-ShellConfiguration {
 
             $zipPath = Join-Path $tempDir "FiraCode.zip"
             Write-Log "Downloading Fira Code..." -Level Info
+            # SECURITY: this download is not hash-pinned. Pin a known SHA256 for the
+            # release asset here (Get-FileHash after download) to guarantee integrity.
             (New-Object System.Net.WebClient).DownloadFile($fontUrl, $zipPath)
 
             $fontsPath = Join-Path $tempDir "fonts"

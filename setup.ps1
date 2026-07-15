@@ -43,6 +43,9 @@ param(
 
 # ========== Initialization ==========
 
+# Surface undefined variables, missing properties and bad indexing early.
+Set-StrictMode -Version Latest
+
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $srcPath = Join-Path $scriptRoot "src"
 $corePath = Join-Path $srcPath "core"

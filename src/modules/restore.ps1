@@ -137,7 +137,11 @@ function Restore-SafeDefaults {
     $optimizeFile = Join-Path $PSScriptRoot "optimize.ps1"
     if (Test-Path -Path $optimizeFile) {
         . $optimizeFile
-        $optimizeServices = @((Get-OptimizeTweaks -Profile gaming).Services | Where-Object { $_ })
+        $optimizeServices = @(
+            Get-OptimizeTweaks -Profile gaming | ForEach-Object {
+                if ($_.ContainsKey('Services')) { $_.Services }
+            }
+        )
         # DiagTrack is handled separately (opt-in via -RestoreTelemetry).
         $handled = @($serviceDefaults.Keys) + 'DiagTrack'
         $missing = @($optimizeServices | Where-Object { $_ -notin $handled })
