@@ -45,7 +45,10 @@ function Install-Program {
         [string]$ChocoId = $null,
 
         [Parameter(Mandatory = $false)]
-        [string]$InstallerUrl = $null
+        [string]$InstallerUrl = $null,
+
+        [Parameter(Mandatory = $false)]
+        [string]$InstallerSha256 = $null
     )
 
     if (Test-ProgramInstalled -ProgramName $Name -Executable $Executable -WingetId $WingetId) {
@@ -90,7 +93,7 @@ function Install-Program {
         # Method 3: Try custom installer URL
         if ($InstallerUrl) {
             Write-Log "Attempting: custom installer URL" -Level Warning
-            Install-FromUrl -Name $Name -Url $InstallerUrl
+            Install-FromUrl -Name $Name -Url $InstallerUrl -Sha256 $InstallerSha256
             return $true
         }
 
@@ -102,13 +105,33 @@ function Install-Program {
     }
 }
 
+<#
+.SYNOPSIS
+    Downloads and runs a silent installer from a URL, optionally verifying its hash.
+.DESCRIPTION
+    Last-resort install method. Downloads the installer to a temp file and runs it
+    with '/S'. If -Sha256 is supplied, the downloaded file's SHA256 is verified
+    before execution and a mismatch aborts (the file is deleted). Without -Sha256
+    the download is unverified and a warning is logged.
+.PARAMETER Name
+    Display name, used for logging.
+.PARAMETER Url
+    Direct installer URL.
+.PARAMETER Sha256
+    Optional expected SHA256 hash; if given, the installer is verified before it runs.
+.EXAMPLE
+    Install-FromUrl -Name 'Foo' -Url 'https://example.com/foo.exe' -Sha256 'ABC123...'
+#>
 function Install-FromUrl {
     param(
         [Parameter(Mandatory = $true)]
         [string]$Name,
 
         [Parameter(Mandatory = $true)]
-        [string]$Url
+        [string]$Url,
+
+        [Parameter(Mandatory = $false)]
+        [string]$Sha256
     )
 
     try {
@@ -116,6 +139,18 @@ function Install-FromUrl {
 
         Write-Log "Downloading installer for $Name..." -Level Info
         Invoke-WebRequest -Uri $Url -OutFile $tempFile -UseBasicParsing -ProgressAction SilentlyContinue
+
+        if ($Sha256) {
+            $actual = (Get-FileHash -Path $tempFile -Algorithm SHA256).Hash
+            if ($actual -ne $Sha256) {
+                Remove-Item -Path $tempFile -Force -ErrorAction SilentlyContinue
+                throw "SHA256 mismatch for $Name (expected $Sha256, got $actual)"
+            }
+            Write-Log "Installer verified (SHA256)" -Level Success
+        }
+        else {
+            Write-Log "No SHA256 provided - installer for $Name is unverified" -Level Warning
+        }
 
         Write-Log "Executing installer..." -Level Info
         Start-Process -FilePath $tempFile -Wait -ArgumentList "/S"

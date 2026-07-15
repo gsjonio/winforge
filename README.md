@@ -85,6 +85,7 @@ is a hashtable in its group module under `src/modules/`, consumed by
 | `ChocoId` | string | no | *(none)* | Chocolatey package id (fallback if winget fails). |
 | `Executable` | string | no | *(none)* | Command probed on PATH for idempotent detection. |
 | `InstallerUrl` | string | no | *(none)* | Direct installer URL (last-resort fallback, run silently with `/S`). |
+| `InstallerSha256` | string | no | *(none)* | Expected SHA256 of `InstallerUrl`; if set, the download is verified before it runs. |
 
 Example — add a program to a group:
 
@@ -242,6 +243,7 @@ programa é um hashtable no módulo do grupo em `src/modules/`, consumido pelo
 | `ChocoId` | string | não | *(nenhum)* | Id do pacote Chocolatey (fallback se o winget falhar). |
 | `Executable` | string | não | *(nenhum)* | Comando procurado no PATH para detecção idempotente. |
 | `InstallerUrl` | string | não | *(nenhum)* | URL direta do instalador (último recurso, silencioso com `/S`). |
+| `InstallerSha256` | string | não | *(nenhum)* | SHA256 esperado do `InstallerUrl`; se definido, o download é verificado antes de rodar. |
 
 Exemplo — adicionar um programa a um grupo:
 
