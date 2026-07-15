@@ -124,7 +124,7 @@ function Install-FromUrl {
     }
 }
 
-function Apply-SystemConfig {
+function Invoke-SystemConfig {
     param(
         [Parameter(Mandatory = $true)]
         [string]$Description,

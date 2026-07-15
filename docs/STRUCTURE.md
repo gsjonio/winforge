@@ -15,7 +15,7 @@
 | ------ | ----------- | --------- |
 | `Installation.ps1` | `Install-Program()` | Install via Winget with fallback |
 | | `Install-FromUrl()` | Download and execute custom installer |
-| | `Apply-SystemConfig()` | Apply system configuration with error handling |
+| | `Invoke-SystemConfig()` | Apply system configuration with error handling |
 
 ### Utilities (`src/utils/`)
 
@@ -99,13 +99,13 @@ setup.ps1 (entry point)
   ├─ Installation.ps1
   │  ├─ Install-Program()        ← Main install function
   │  │  └─ Test-ProgramInstalled()
-  │  └─ Apply-SystemConfig()     ← Execute config blocks
+  │  └─ Invoke-SystemConfig()     ← Execute config blocks
   │
   └─ modules/{group}.ps1
      ├─ Install-{Group}Programs()
      │  └─ Install-Program()     ← Delegates to core
      └─ Set-{Group}Configuration()
-        └─ Apply-SystemConfig()  ← Delegates to core
+        └─ Invoke-SystemConfig()  ← Delegates to core
 ```
 
 ## Responsibility Summary
@@ -133,7 +133,7 @@ setup.ps1 (entry point)
 
 - Which programs belong to each group
 - What configurations to apply
-- Uses core logic via `Install-Program()` and `Apply-SystemConfig()`
+- Uses core logic via `Install-Program()` and `Invoke-SystemConfig()`
 
 ### `docs/` - Documentation
 
@@ -190,7 +190,7 @@ Optimized for clarity and maintainability:
 | Change registry | `src/utils/Registry.ps1` | `Set-RegistryValue()` |
 | Request admin | `src/utils/System.ps1` | `Request-Elevation()` |
 | Main install | `src/core/Installation.ps1` | `Install-Program()` |
-| Apply config | `src/core/Installation.ps1` | `Apply-SystemConfig()` |
+| Apply config | `src/core/Installation.ps1` | `Invoke-SystemConfig()` |
 | Base programs | `src/modules/base.ps1` | `Install-BasePrograms()` |
 | Dev config | `src/modules/dev.ps1` | `Set-DevConfiguration()` |
 

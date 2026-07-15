@@ -120,18 +120,18 @@ Visual Studio... Microsoft.VisualStudioCode   1.95.0  winget
 
 ## Adding System Configurations
 
-In the `Set-*Configuration` functions, use `Apply-SystemConfig` with `Set-RegistryValue`:
+In the `Set-*Configuration` functions, use `Invoke-SystemConfig` with `Set-RegistryValue`:
 
 ```powershell
 function Set-DevConfiguration {
     Write-GroupHeader "DEV - Development Configuration"
 
-    Apply-SystemConfig "Enable Windows Developer Mode" {
+    Invoke-SystemConfig "Enable Windows Developer Mode" {
         Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\AppModelUnlock" `
             -Name "AllowDevelopmentWithoutDevLicense" -Value 1 -Type DWord
     }
 
-    Apply-SystemConfig "Configure Git" {
+    Invoke-SystemConfig "Configure Git" {
         git config --global user.name "Your Name"
         git config --global user.email "your.email@example.com"
     }

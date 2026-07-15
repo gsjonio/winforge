@@ -4,7 +4,7 @@ function Install-ShellPrograms {
     Write-GroupHeader "SHELL - PowerShell Enhancement"
 
     # Update PowerShell to latest version before installing Oh My Posh
-    Apply-SystemConfig "Update PowerShell to latest version" {
+    Invoke-SystemConfig "Update PowerShell to latest version" {
         Write-Log "Checking for PowerShell updates..." -Level Info
         winget upgrade --id Microsoft.PowerShell -e --accept-source-agreements --silent 2>&1 | Out-Null
         Write-Log "PowerShell update check completed" -Level Success
@@ -27,7 +27,7 @@ function Set-ShellConfiguration {
     Write-GroupHeader "SHELL - Terminal Configuration"
 
     # Install Fira Code font
-    Apply-SystemConfig "Install Fira Code font" {
+    Invoke-SystemConfig "Install Fira Code font" {
         $fontUrl = "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
         $tempDir = Join-Path $env:TEMP "FiraCode"
 
@@ -67,7 +67,7 @@ function Set-ShellConfiguration {
     }
 
     # Download and configure Oh My Posh half-life theme
-    Apply-SystemConfig "Download Oh My Posh half-life theme" {
+    Invoke-SystemConfig "Download Oh My Posh half-life theme" {
         $appDataPath = $env:APPDATA
         $ohMyPoshDir = Join-Path $appDataPath "oh-my-posh"
         $configPath = Join-Path $ohMyPoshDir "config.json"
@@ -89,7 +89,7 @@ function Set-ShellConfiguration {
     }
 
     # Create or update PowerShell profile
-    Apply-SystemConfig "Configure PowerShell profile with Oh My Posh" {
+    Invoke-SystemConfig "Configure PowerShell profile with Oh My Posh" {
         $profilePath = $PROFILE
         $profileDir = Split-Path -Parent $profilePath
 
@@ -212,7 +212,7 @@ $host.ui.RawUI.WindowTitle = "PowerShell - $(Split-Path -Leaf $pwd)"
     }
 
     # Set terminal font to Fira Code in Windows Terminal config
-    Apply-SystemConfig "Configure Windows Terminal to use Fira Code" {
+    Invoke-SystemConfig "Configure Windows Terminal to use Fira Code" {
         $wtConfigPath = Join-Path $env:LOCALAPPDATA "Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
 
         if (Test-Path $wtConfigPath) {
