@@ -36,27 +36,3 @@ function Request-Elevation {
     Start-Process -FilePath $psPath -ArgumentList $argList -Verb RunAs -Wait
     exit $LASTEXITCODE
 }
-
-function Wait-ProcessExit {
-    param(
-        [Parameter(Mandatory = $true)]
-        [int]$ProcessId,
-
-        [Parameter(Mandatory = $false)]
-        [int]$TimeoutSeconds = 300
-    )
-
-    try {
-        $process = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue
-        if ($process) {
-            $process.WaitForExit($TimeoutSeconds * 1000)
-        }
-    }
-    catch {
-        Write-Log "Error waiting for process: $_" -Level Warning
-    }
-}
-
-function Get-InstalledPrograms {
-    return @(Get-Package -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name)
-}

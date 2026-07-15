@@ -31,19 +31,3 @@ function Write-GroupHeader {
     Write-Host "  GROUP: $GroupName" -ForegroundColor Cyan
     Write-Host "=======================================================================" -ForegroundColor Cyan
 }
-
-function Write-Section {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Title,
-
-        [Parameter(Mandatory = $false)]
-        [string]$Subtitle
-    )
-
-    Write-Host ""
-    Write-Host $Title -ForegroundColor Cyan
-    if ($Subtitle) {
-        Write-Host $Subtitle -ForegroundColor Gray
-    }
-}
