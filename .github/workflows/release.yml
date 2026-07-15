@@ -30,26 +30,27 @@ jobs:
       - name: Generate release notes from CHANGELOG
         id: notes
         shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          # Extract changelog section for this version
-          version=${{ steps.version.outputs.version }}
+          # Extract the English CHANGELOG section for this version: everything
+          # between "## [<version>]" and the next "## [" header, dropping the
+          # header line, any '---' rules, and leading/trailing blank lines.
+          notes=$(awk -v ver="$VERSION" '
+            index($0, "## [" ver "]") == 1 { flag = 1; next }
+            flag && index($0, "## [") == 1 { exit }
+            flag { print }
+          ' CHANGELOG.md | sed '/^---$/d' | sed -e '/./,$!d' | tac | sed -e '/./,$!d' | tac)
 
-          # Find the section for this version in CHANGELOG
-          changelog=$(awk "/^\## \[$version\]/,/^\## \[/" CHANGELOG.md | head -n -1)
-
-          if [ -z "$changelog" ]; then
-            echo "## Release $version" > release_notes.md
-            echo "" >> release_notes.md
-            echo "See [CHANGELOG.md](CHANGELOG.md) for details" >> release_notes.md
-          else
-            echo "$changelog" > release_notes.md
+          if [ -z "$notes" ]; then
+            notes=$(printf '## Release %s\n\nSee [CHANGELOG.md](CHANGELOG.md) for details.' "$VERSION")
           fi
 
-          # Read the notes into output variable
-          notes=$(cat release_notes.md)
-          echo "notes<<EOF" >> $GITHUB_OUTPUT
-          echo "$notes" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          {
+            echo "notes<<EOF"
+            echo "$notes"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -68,6 +69,9 @@ jobs:
 
       - name: Notify release
         shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          TAG: ${{ steps.version.outputs.tag }}
         run: |
-          echo "✓ Release v${{ steps.version.outputs.version }} created successfully"
-          echo "📦 Tag: ${{ steps.version.outputs.tag }}"
+          echo "✓ Release v$VERSION created successfully"
+          echo "📦 Tag: $TAG"

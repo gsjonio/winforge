@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   group-function nouns, delegated ShouldProcess, no-BOM UTF-8, Write-Log). Any new
   violation outside that list still surfaces.
 
+### Fixed
+
+- The release workflow now extracts the actual CHANGELOG section for the tag's
+  version (instead of falling back to a generic "See CHANGELOG.md") and passes the
+  version via `env` rather than interpolating it into the shell.
+
 ---
 
 ## [0.8.1] - 2026-07-15
@@ -433,6 +439,12 @@ e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0
   limpo dos warnings de padrões intencionais (log via Write-Host, nomes plurais de
   funções de grupo, ShouldProcess delegado, UTF-8 sem BOM, Write-Log). Qualquer
   violação nova fora dessa lista ainda aparece.
+
+#### Corrigido
+
+- O workflow de release agora extrai a seção real do CHANGELOG da versão da tag
+  (em vez de cair no genérico "See CHANGELOG.md") e passa a versão via `env` em vez
+  de interpolar no shell.
 
 ---
 
