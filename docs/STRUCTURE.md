@@ -59,7 +59,7 @@
 | File | Purpose |
 | ------ | --------- |
 | `config/` | (Reserved) Future configuration files |
-| `tests/` | (Reserved) Future test scripts |
+| `tests/` | Pester unit tests (e.g. `Get-OptimizeTweaks` invariants) |
 
 ## Loading Order (setup.ps1)
 

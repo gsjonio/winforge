@@ -66,6 +66,7 @@ release from `CHANGELOG.md`. Follow [Semantic Versioning](https://semver.org):
 ```powershell
 .\tools\lint.ps1        # PSScriptAnalyzer
 .\tools\validate.ps1    # installation detection sanity
+Invoke-Pester .\tests   # unit tests (requires Pester 5+)
 ```
 
 CI also runs lint, validation, security, and documentation checks on every PR.
