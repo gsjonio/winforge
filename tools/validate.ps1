@@ -85,7 +85,8 @@ function Test-OptimizeSafety {
 
     # 1. safe profile must not disable any critical service
     $safe = Get-OptimizeTweaks -Profile safe
-    $hits = @($safe.Services | Where-Object { $_ -in $forbidden })
+    $safeServices = @($safe | ForEach-Object { if ($_.ContainsKey('Services')) { $_.Services } })
+    $hits = @($safeServices | Where-Object { $_ -in $forbidden })
     if ($hits.Count -gt 0) {
         Write-Log "FAIL: safe profile disables: $($hits -join ', ')" -Level Error; $ok = $false
     }
@@ -94,7 +95,7 @@ function Test-OptimizeSafety {
     }
 
     # 2. VSS and StorSvc must never be disabled on any profile (removed entirely)
-    $allSvc = (Get-OptimizeTweaks -Profile gaming).Services
+    $allSvc = @(Get-OptimizeTweaks -Profile gaming | ForEach-Object { if ($_.ContainsKey('Services')) { $_.Services } })
     foreach ($svc in @('VSS', 'StorSvc')) {
         if ($svc -in $allSvc) {
             Write-Log "FAIL: $svc is disabled on some profile" -Level Error; $ok = $false

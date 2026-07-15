@@ -75,7 +75,7 @@ function Test-ProgramInstalled {
         if (Test-Path -Path $regPath) {
             $regTest = Get-ChildItem -Path $regPath -ErrorAction SilentlyContinue |
                 Get-ItemProperty -ErrorAction SilentlyContinue |
-                Where-Object { $_.DisplayName -like "*$ProgramName*" } |
+                Where-Object { $_.PSObject.Properties['DisplayName'] -and $_.DisplayName -like "*$ProgramName*" } |
                 Select-Object -First 1
 
             if ($regTest) {
@@ -172,14 +172,16 @@ function Get-InstallationStatus {
         if (Test-Path -Path $regPath) {
             $regTest = Get-ChildItem -Path $regPath -ErrorAction SilentlyContinue |
                 Get-ItemProperty -ErrorAction SilentlyContinue |
-                Where-Object { $_.DisplayName -like "*$ProgramName*" } |
+                Where-Object { $_.PSObject.Properties['DisplayName'] -and $_.DisplayName -like "*$ProgramName*" } |
                 Select-Object -First 1
 
             if ($regTest) {
                 $status.IsInstalled = $true
                 $status.DetectionMethod = "Registry"
                 $status.Details += "DisplayName: $($regTest.DisplayName)"
-                $status.Details += "Version: $($regTest.DisplayVersion)"
+                if ($regTest.PSObject.Properties['DisplayVersion']) {
+                    $status.Details += "Version: $($regTest.DisplayVersion)"
+                }
                 return $status
             }
         }
