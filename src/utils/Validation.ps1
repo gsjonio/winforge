@@ -1,5 +1,23 @@
 # Program installation validation and detection
 
+<#
+.SYNOPSIS
+    Tests whether a program is already installed.
+.DESCRIPTION
+    Detects an installed program using four methods in order: executable on PATH,
+    Get-Package, 'winget list', and the uninstall registry keys. Returns on the
+    first positive match, so a re-run of the installer is a no-op.
+.PARAMETER ProgramName
+    Display name to match (used for Get-Package and registry lookups).
+.PARAMETER Executable
+    Optional command name to probe on PATH.
+.PARAMETER WingetId
+    Optional winget package id to probe via 'winget list'.
+.OUTPUTS
+    System.Boolean. $true if detected by any method, otherwise $false.
+.EXAMPLE
+    Test-ProgramInstalled -ProgramName 'Git' -Executable 'git' -WingetId 'Git.Git'
+#>
 function Test-ProgramInstalled {
     param(
         [Parameter(Mandatory = $true)]
@@ -42,7 +60,7 @@ function Test-ProgramInstalled {
             }
         }
         catch {
-            # Silently continue if winget check fails
+            Write-Verbose "winget check failed for '$WingetId': $_"
         }
     }
 
@@ -57,7 +75,7 @@ function Test-ProgramInstalled {
         if (Test-Path -Path $regPath) {
             $regTest = Get-ChildItem -Path $regPath -ErrorAction SilentlyContinue |
                 Get-ItemProperty -ErrorAction SilentlyContinue |
-                Where-Object { $_.DisplayName -like "*$ProgramName*" } |
+                Where-Object { $_.PSObject.Properties['DisplayName'] -and $_.DisplayName -like "*$ProgramName*" } |
                 Select-Object -First 1
 
             if ($regTest) {
@@ -70,6 +88,24 @@ function Test-ProgramInstalled {
     return $false
 }
 
+<#
+.SYNOPSIS
+    Returns detailed installation status for a program.
+.DESCRIPTION
+    Like Test-ProgramInstalled but returns a status object describing how the
+    program was detected (executable, package, winget, or registry) plus details,
+    for reporting rather than a boolean guard.
+.PARAMETER ProgramName
+    Display name to match.
+.PARAMETER Executable
+    Optional command name to probe on PATH.
+.PARAMETER WingetId
+    Optional winget package id to probe via 'winget list'.
+.OUTPUTS
+    System.Collections.Hashtable with Name, IsInstalled, DetectionMethod, Details.
+.EXAMPLE
+    Get-InstallationStatus -ProgramName 'Git' -Executable 'git' -WingetId 'Git.Git'
+#>
 function Get-InstallationStatus {
     param(
         [Parameter(Mandatory = $true)]
@@ -120,7 +156,9 @@ function Get-InstallationStatus {
                 return $status
             }
         }
-        catch { }
+        catch {
+            Write-Verbose "winget check failed for '$WingetId': $_"
+        }
     }
 
     # Check registry
@@ -134,14 +172,16 @@ function Get-InstallationStatus {
         if (Test-Path -Path $regPath) {
             $regTest = Get-ChildItem -Path $regPath -ErrorAction SilentlyContinue |
                 Get-ItemProperty -ErrorAction SilentlyContinue |
-                Where-Object { $_.DisplayName -like "*$ProgramName*" } |
+                Where-Object { $_.PSObject.Properties['DisplayName'] -and $_.DisplayName -like "*$ProgramName*" } |
                 Select-Object -First 1
 
             if ($regTest) {
                 $status.IsInstalled = $true
                 $status.DetectionMethod = "Registry"
                 $status.Details += "DisplayName: $($regTest.DisplayName)"
-                $status.Details += "Version: $($regTest.DisplayVersion)"
+                if ($regTest.PSObject.Properties['DisplayVersion']) {
+                    $status.Details += "Version: $($regTest.DisplayVersion)"
+                }
                 return $status
             }
         }

@@ -10,7 +10,7 @@ win-setup/
 │
 ├── src/                         # Source code
 │   ├── core/                    # Core installation logic
-│   │   ├── Installation.ps1     # Install-Program, Apply-SystemConfig
+│   │   ├── Installation.ps1     # Install-Program, Invoke-SystemConfig
 │   │   └── Configuration.ps1    # (Reserved) System configuration
 │   │
 │   ├── utils/                   # Utility functions
@@ -55,7 +55,7 @@ win-setup/
 - **Installation.ps1**
   - `Install-Program()` - Main installation function (Winget + fallback)
   - `Install-FromUrl()` - Custom installer download and execution
-  - `Apply-SystemConfig()` - Apply system configurations with error handling
+  - `Invoke-SystemConfig()` - Apply system configurations with error handling
 
 ### `src/utils/`
 
@@ -163,10 +163,10 @@ setup.ps1
 ### Add System Configuration
 
 1. Edit appropriate module in `src/modules/`
-2. Use `Apply-SystemConfig` in `Set-{Group}Configuration()`:
+2. Use `Invoke-SystemConfig` in `Set-{Group}Configuration()`:
 
    ```powershell
-   Apply-SystemConfig "Enable Dark Mode" {
+   Invoke-SystemConfig "Enable Dark Mode" {
        Set-RegistryValue -Path "HKCU:\Software\..." -Name "..." -Value 0 -Type DWord
    }
    ```

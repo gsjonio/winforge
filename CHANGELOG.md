@@ -11,6 +11,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.0] - 2026-07-15
+
+### Added
+
+- **`-WhatIf` support** across all groups: `Install-Program` and
+  `Invoke-SystemConfig` now support `ShouldProcess`, so `setup.ps1 -WhatIf`
+  previews program installs and every configuration tweak without applying them.
+- **Optional SHA256 verification** for URL installers: `Install-FromUrl -Sha256`
+  verifies the download before executing it, exposed via a new optional
+  `InstallerSha256` program key.
+- **Bilingual README** (English + Português) with a code-derived command and
+  configuration reference.
+
+### Changed
+
+- Enabled `Set-StrictMode -Version Latest` in `setup.ps1`.
+- Renamed `Apply-SystemConfig` to `Invoke-SystemConfig` (approved verb).
+
+### Fixed
+
+- Two latent bugs that only fail under strict mode: the restore drift check read
+  `.Services` on tweaks lacking the key, and program detection read `.DisplayName`
+  / `.DisplayVersion` on uninstall-registry entries that may not have them.
+- Empty catch blocks in program detection now log the swallowed error; removed an
+  unused variable in the branch-protection tool.
+
+---
+
 ## [0.7.1] - 2026-07-14
 
 ### Fixed
@@ -368,6 +396,34 @@ Registro de todas as alterações notáveis deste projeto.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0.html).
+
+### 0.8.0 - 2026-07-15
+
+#### Adicionado
+
+- **Suporte a `-WhatIf`** em todos os grupos: `Install-Program` e
+  `Invoke-SystemConfig` agora suportam `ShouldProcess`, então `setup.ps1 -WhatIf`
+  prevê instalações e todos os tweaks de configuração sem aplicá-los.
+- **Verificação SHA256 opcional** para instaladores por URL: `Install-FromUrl
+  -Sha256` verifica o download antes de executá-lo, exposto pela nova chave
+  opcional `InstallerSha256`.
+- **README bilíngue** (English + Português) com referência de comandos e
+  configuração derivada do código.
+
+#### Alterado
+
+- `Set-StrictMode -Version Latest` habilitado no `setup.ps1`.
+- `Apply-SystemConfig` renomeado para `Invoke-SystemConfig` (verbo aprovado).
+
+#### Corrigido
+
+- Dois bugs latentes que só falham sob strict mode: o drift check do restore lia
+  `.Services` em tweaks sem a chave, e a detecção de programas lia `.DisplayName`
+  / `.DisplayVersion` em entradas de registro que podem não ter.
+- Blocos catch vazios na detecção agora logam o erro engolido; variável não usada
+  removida na ferramenta de branch-protection.
+
+---
 
 ### 0.7.1 - 2026-07-14
 
