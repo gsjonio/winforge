@@ -30,6 +30,7 @@ function Install-Chocolatey {
 }
 
 function Install-Program {
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory = $true)]
         [string]$Name,
@@ -48,6 +49,10 @@ function Install-Program {
     )
 
     if (Test-ProgramInstalled -ProgramName $Name -Executable $Executable -WingetId $WingetId) {
+        return $true
+    }
+
+    if (-not $PSCmdlet.ShouldProcess($Name, "Install program")) {
         return $true
     }
 
@@ -125,6 +130,7 @@ function Install-FromUrl {
 }
 
 function Invoke-SystemConfig {
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory = $true)]
         [string]$Description,
@@ -132,6 +138,10 @@ function Invoke-SystemConfig {
         [Parameter(Mandatory = $true)]
         [scriptblock]$ConfigBlock
     )
+
+    if (-not $PSCmdlet.ShouldProcess($Description, "Apply configuration")) {
+        return
+    }
 
     Write-Log "Applying: $Description" -Level Info
 
