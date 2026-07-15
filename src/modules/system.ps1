@@ -38,12 +38,12 @@ function Set-SystemConfiguration {
     Write-GroupHeader "SYSTEM - System Configuration"
 
     # Example: Configure system monitoring
-    # Apply-SystemConfig "Enable detailed system monitoring" {
+    # Invoke-SystemConfig "Enable detailed system monitoring" {
     #     Write-Log "System monitoring configured" -Level Success
     # }
 
     # Example: System performance optimization
-    # Apply-SystemConfig "Optimize system performance" {
+    # Invoke-SystemConfig "Optimize system performance" {
     #     # Add system optimizations here
     # }
 }

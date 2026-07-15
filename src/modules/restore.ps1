@@ -74,14 +74,14 @@ function Restore-SafeDefaults {
                     Write-Log "Service '$name' not present - skipped" -Level Skip
                 }
             }.GetNewClosure()
-            Apply-SystemConfig "Restore service $name -> $($def.StartType)" $action
+            Invoke-SystemConfig "Restore service $name -> $($def.StartType)" $action
         }
     }
 
     # DiagTrack (telemetry) is opt-in — re-enabling it is privacy-sensitive.
     if ($RestoreTelemetry) {
         if ($PSCmdlet.ShouldProcess('DiagTrack', 'Restore telemetry service (Automatic)')) {
-            Apply-SystemConfig "Restore DiagTrack (telemetry) -> Automatic" {
+            Invoke-SystemConfig "Restore DiagTrack (telemetry) -> Automatic" {
                 Get-Service -Name 'DiagTrack' -ErrorAction SilentlyContinue | Set-Service -StartupType Automatic -ErrorAction SilentlyContinue
             }
         }
@@ -116,7 +116,7 @@ function Restore-SafeDefaults {
 
     foreach ($revert in $registryReverts) {
         if ($PSCmdlet.ShouldProcess($revert.Desc, 'Revert registry')) {
-            Apply-SystemConfig $revert.Desc $revert.Op
+            Invoke-SystemConfig $revert.Desc $revert.Op
         }
     }
 
@@ -124,7 +124,7 @@ function Restore-SafeDefaults {
     Write-Log "VSS restored, but System Restore protection may still be OFF." -Level Warning
     if ($EnableSystemRestore) {
         if ($PSCmdlet.ShouldProcess('C:\', 'Enable System Restore')) {
-            Apply-SystemConfig "Enable System Restore on C:\" {
+            Invoke-SystemConfig "Enable System Restore on C:\" {
                 Enable-ComputerRestore -Drive "C:\" -ErrorAction SilentlyContinue
             }
         }

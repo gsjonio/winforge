@@ -249,7 +249,7 @@ function Get-OptimizeTweaks {
     gaming). The default 'safe' profile applies only reversible privacy, visual,
     storage and harmless-service tweaks; it never disables VSS, StorSvc,
     SmartScreen, DPS, WinRM or SysMain. Each tweak is executed through
-    Apply-SystemConfig so failures are logged and non-fatal.
+    Invoke-SystemConfig so failures are logged and non-fatal.
 .PARAMETER Profile
     safe (default), desktop, or gaming.
 .EXAMPLE
@@ -269,7 +269,7 @@ function Set-OptimizeConfiguration {
     Write-GroupHeader "OPTIMIZE - System Optimization ($Profile profile)"
 
     foreach ($tweak in (Get-OptimizeTweaks -Profile $Profile)) {
-        Apply-SystemConfig $tweak.Name $tweak.Action
+        Invoke-SystemConfig $tweak.Name $tweak.Action
     }
 
     Write-Log "All optimizations for the '$Profile' profile completed" -Level Success

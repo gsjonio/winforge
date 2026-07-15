@@ -48,13 +48,13 @@ function Set-BaseConfiguration {
     # Uncomment and adapt as needed:
 
     # Enable dark mode
-    # Apply-SystemConfig "Enable Dark Mode" {
+    # Invoke-SystemConfig "Enable Dark Mode" {
     #     Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" `
     #         -Name "AppsUseLightTheme" -Value 0 -Type DWord
     # }
 
     # Disable unnecessary services
-    # Apply-SystemConfig "Disable unnecessary services" {
+    # Invoke-SystemConfig "Disable unnecessary services" {
     #     @("DiagTrack", "dmwappushservice") | ForEach-Object {
     #         Get-Service -Name $_ -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled
     #     }
