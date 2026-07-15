@@ -1,7 +1,7 @@
 # winforge — Windows Post-Format Automation
 
 [![PowerShell 7+](https://img.shields.io/badge/PowerShell-7.0%2B-blue)](https://github.com/PowerShell/PowerShell)
-[![Release: v0.8.0](https://img.shields.io/badge/release-v0.8.0-blue)](https://github.com/gsjonio/winforge/releases/tag/v0.8.0)
+[![Release: v0.8.1](https://img.shields.io/badge/release-v0.8.1-blue)](https://github.com/gsjonio/winforge/releases/tag/v0.8.1)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Docs: EN/PT-BR](https://img.shields.io/badge/docs-EN%2FPT--BR-orange)](README.md)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-gugamenezes-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/gugamenezes)
@@ -163,7 +163,7 @@ CI.
 
 ### License & status
 
-MIT ([LICENSE](LICENSE)). **Status:** active — current release **v0.8.0**.
+MIT ([LICENSE](LICENSE)). **Status:** active — current release **v0.8.1**.
 If winforge saves you time, you can [buy me a coffee](https://buymeacoffee.com/gugamenezes).
 
 ---
@@ -321,5 +321,5 @@ no CI.
 
 ### Licença & status
 
-MIT ([LICENSE](LICENSE)). **Status:** ativo — release atual **v0.8.0**.
+MIT ([LICENSE](LICENSE)). **Status:** ativo — release atual **v0.8.1**.
 Se o winforge te economiza tempo, você pode [me pagar um café](https://buymeacoffee.com/gugamenezes).

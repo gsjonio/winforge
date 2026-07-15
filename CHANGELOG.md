@@ -11,6 +11,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.1] - 2026-07-15
+
+### Added
+
+- Pester test suite (`tests/`) locking in the `Get-OptimizeTweaks` safety
+  invariants (safe profile disables no critical service, etc.).
+
+### Removed
+
+- Seven unused utility functions: `Write-Section`, `Get-RegistryValue`,
+  `Enable-Feature`, `Disable-Feature`, `Set-FileAssociation`, `Wait-ProcessExit`,
+  `Get-InstalledPrograms`.
+
+---
+
 ## [0.8.0] - 2026-07-15
 
 ### Added
@@ -396,6 +411,21 @@ Registro de todas as alterações notáveis deste projeto.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0.html).
+
+### 0.8.1 - 2026-07-15
+
+#### Adicionado
+
+- Suíte de testes Pester (`tests/`) travando os invariantes de segurança do
+  `Get-OptimizeTweaks` (perfil safe não desabilita serviço crítico, etc.).
+
+#### Removido
+
+- Sete funções utilitárias não usadas: `Write-Section`, `Get-RegistryValue`,
+  `Enable-Feature`, `Disable-Feature`, `Set-FileAssociation`, `Wait-ProcessExit`,
+  `Get-InstalledPrograms`.
+
+---
 
 ### 0.8.0 - 2026-07-15
 
