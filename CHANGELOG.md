@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.3] - 2026-07-16
+
+### Added
+
+- Bilingual beginner's guide: `docs/GUIDE.md` and `docs/GUIDE.pt-BR.md`.
+
+### Changed
+
+- Split the README into an English-only `README.md` (fixed standard layout with
+  dynamic release/license badges) and a structurally identical `README.pt-BR.md`
+  mirror, per the project docs standard.
+
+---
+
 ## [0.8.2] - 2026-07-15
 
 ### Changed
@@ -429,6 +443,20 @@ Registro de todas as alterações notáveis deste projeto.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0.html).
+
+### 0.8.3 - 2026-07-16
+
+#### Adicionado
+
+- Guia do iniciante bilíngue: `docs/GUIDE.md` e `docs/GUIDE.pt-BR.md`.
+
+#### Alterado
+
+- README dividido em `README.md` só-inglês (layout padrão com badges dinâmicos de
+  release/license) e um espelho `README.pt-BR.md` estruturalmente idêntico,
+  conforme o padrão de docs do projeto.
+
+---
 
 ### 0.8.2 - 2026-07-15
 
