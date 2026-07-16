@@ -11,6 +11,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.4] - 2026-07-16
+
+### Added
+
+- Community-standards files: `SECURITY.md`, `CODE_OF_CONDUCT.md`, issue/PR
+  templates, and `FUNDING` / Dependabot config (GitHub Actions only).
+
+### Changed
+
+- Upgraded `CONTRIBUTING.md` to the standard gitflow layout; linked `SECURITY.md`
+  from the README.
+
+### Removed
+
+- Two non-applicable jobs from the security workflow (grep-based dependency
+  checks that never gated and don't fit a dependency-less PowerShell repo).
+
+---
+
 ## [0.8.3] - 2026-07-16
 
 ### Added
@@ -443,6 +462,25 @@ Registro de todas as alterações notáveis deste projeto.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere a [Versionamento Semântico](https://semver.org/spec/v2.0.0.html).
+
+### 0.8.4 - 2026-07-16
+
+#### Adicionado
+
+- Arquivos de padrões de comunidade: `SECURITY.md`, `CODE_OF_CONDUCT.md`,
+  templates de issue/PR e config de `FUNDING` / Dependabot (só GitHub Actions).
+
+#### Alterado
+
+- `CONTRIBUTING.md` atualizado para o layout gitflow padrão; `SECURITY.md` linkado
+  a partir do README.
+
+#### Removido
+
+- Dois jobs não-aplicáveis do workflow de segurança (checagens de dependência via
+  grep que nunca gatavam e não cabem num repo PowerShell sem dependências).
+
+---
 
 ### 0.8.3 - 2026-07-16
 

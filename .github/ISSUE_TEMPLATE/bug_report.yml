@@ -1,0 +1,38 @@
+name: Bug report
+description: Something in winforge does not work as documented.
+labels: ["type: fix", "semver: patch"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you ran, what you expected, and what you got instead.
+      placeholder: |
+        I ran `.\setup.ps1 -Group ...`
+        I expected ...
+        Instead ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: winforge version and PowerShell
+      description: The release tag (or `git describe`) and `$PSVersionTable.PSVersion`.
+      placeholder: "v0.8.3 / 7.6.2"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Windows version
+      options:
+        - Windows 11
+        - Windows 10
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Output or logs
+      description: Paste the relevant winforge log lines (the `[x]` / `[!]` ones).
+      render: shell

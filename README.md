@@ -148,7 +148,8 @@ If winforge is useful to you, you can
 Bug reports and feature requests go through
 [issues](https://github.com/gsjonio/winforge/issues). Security issues go through a
 [private advisory](https://github.com/gsjonio/winforge/security/advisories/new)
-instead.
+instead — see [SECURITY.md](SECURITY.md). Contributions follow
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
