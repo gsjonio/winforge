@@ -150,7 +150,9 @@ Se o winforge é útil pra você, você pode
 
 Relatos de bug e pedidos de recurso vão pelas
 [issues](https://github.com/gsjonio/winforge/issues). Problemas de segurança vão
-por um [advisory privado](https://github.com/gsjonio/winforge/security/advisories/new).
+por um [advisory privado](https://github.com/gsjonio/winforge/security/advisories/new)
+— veja [SECURITY.md](SECURITY.md). Contribuições seguem
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Licença
 
