@@ -1,0 +1,11 @@
+version: 2
+updates:
+  # winforge ships PowerShell scripts with no package manifest, so only the
+  # GitHub Actions used in the workflows are tracked for updates.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "develop"
+    commit-message:
+      prefix: "ci"
